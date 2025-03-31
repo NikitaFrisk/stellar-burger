@@ -17,11 +17,34 @@
 	justify-content: center;
 }
 
-@keyframes logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #131316;
+}
+
+.main {
+    flex-grow: 1;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+	margin-left: calc(48% - 615px);
+    margin-right: calc(48% - 585px);
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    padding: 0 20px;
+    overflow: visible;
 }
