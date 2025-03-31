@@ -25,8 +25,8 @@ export const BurgerConstructor = ({ ingredients }) => {
                 )}
 
                 <div className={styles.scrollArea}>
-                    {fillings.map((item, index) => (
-                        <div key={index} className={styles.ingredient}>
+                    {fillings.map((item, id) => (
+                        <div key={id} className={styles.ingredient}>
                             <div className={styles.dragIcon}>
                                 <DragIcon type="primary" />
                             </div>

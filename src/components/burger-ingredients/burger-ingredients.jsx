@@ -1,25 +1,30 @@
-import { Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import { IngredientType } from '@utils/types';
 import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import IngredientCategory from './ingredient-category';
 
 const BurgerIngredients = ({ ingredients }) => {
     const [current, setCurrent] = useState('bun');
-    const bgingr = useRef(null);
-    const main = useRef(null);
-    const bun = useRef(null);
+    const bunRef = useRef(null);
+    const sauceRef = useRef(null);
+    const mainRef = useRef(null);
 
     const handleTabClick = (value) => {
         setCurrent(value);
         const element = value === 'bun'
-            ? bun.current
+            ? bunRef.current
             : value === 'sauce'
-                ? bgingr.current
-                : main.current;
+                ? sauceRef.current
+                : mainRef.current;
 
         element.scrollIntoView({ behavior: 'smooth' });
     };
+
+    const bunIngredients = ingredients.filter(item => item.type === 'bun');
+    const sauceIngredients = ingredients.filter(item => item.type === 'sauce');
+    const mainIngredients = ingredients.filter(item => item.type === 'main');
 
     return (
         <section className={styles.section}>
@@ -28,64 +33,25 @@ const BurgerIngredients = ({ ingredients }) => {
             <div className={styles.tabs}>
                 <Tab value="bun" active={current === 'bun'} onClick={handleTabClick}>Булки</Tab>
                 <Tab value="sauce" active={current === 'sauce'} onClick={handleTabClick}>Соусы</Tab>
-                <Tab value="main" active={current === 'main'} onClick={handleTabClick}>Начинки
-                </Tab>
+                <Tab value="main" active={current === 'main'} onClick={handleTabClick}>Начинки</Tab>
             </div>
 
             <div className={styles.tabContent}>
-                <div className={styles.category}>
-                    <h2 ref={bun} className={`${styles.categoryTitle} text text_type_main-medium`}>Булки</h2>
-                    <div className={styles.items}>
-                        {ingredients
-                            .filter(item => item.type === 'bun')
-                            .map(item => (
-                                <div key={item._id} className={styles.card}>
-                                    <img src={item.image} alt={item.name} />
-                                    <div className={styles.price}>
-                                        <span className="text text_type_digits-default">{item.price}</span>
-                                        <CurrencyIcon type="primary" />
-                                    </div>
-                                    <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
-                                </div>
-                            ))}
-                    </div>
-                </div>
-
-                <div className={styles.category}>
-                    <h2 ref={bgingr} className={`${styles.categoryTitle} text text_type_main-medium`}>Соусы</h2>
-                    <div className={styles.items}>
-                        {ingredients
-                            .filter(item => item.type === 'sauce')
-                            .map(item => (
-                                <div key={item._id} className={styles.card}>
-                                    <img src={item.image} alt={item.name} />
-                                    <div className={styles.price}>
-                                        <span className="text text_type_digits-default">{item.price}</span>
-                                        <CurrencyIcon type="primary" />
-                                    </div>
-                                    <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
-                                </div>
-                            ))}
-                    </div>
-                </div>
-
-                <div className={styles.category}>
-                    <h2 ref={main} className={`${styles.categoryTitle} text text_type_main-medium`}>Начинки</h2>
-                    <div className={styles.items}>
-                        {ingredients
-                            .filter(item => item.type === 'main')
-                            .map(item => (
-                                <div key={item._id} className={styles.card}>
-                                    <img src={item.image} alt={item.name} />
-                                    <div className={styles.price}>
-                                        <span className="text text_type_digits-default">{item.price}</span>
-                                        <CurrencyIcon type="primary" />
-                                    </div>
-                                    <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
-                                </div>
-                            ))}
-                    </div>
-                </div>
+                <IngredientCategory 
+                    title="Булки" 
+                    ingredients={bunIngredients} 
+                    titleRef={bunRef} 
+                />
+                <IngredientCategory 
+                    title="Соусы" 
+                    ingredients={sauceIngredients} 
+                    titleRef={sauceRef} 
+                />
+                <IngredientCategory 
+                    title="Начинки" 
+                    ingredients={mainIngredients} 
+                    titleRef={mainRef} 
+                />
             </div>
         </section>
     );
