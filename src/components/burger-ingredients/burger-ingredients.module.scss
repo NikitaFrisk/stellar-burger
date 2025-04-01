@@ -26,10 +26,11 @@
 .section {
     width: 100%;
     max-width: 580px;
-
     flex-direction: column;
     margin-top: 0;
     padding-top: 40px;
+    display: flex;
+    height: calc(100vh - 88px - 40px);
 }
 
 .title {
@@ -38,13 +39,18 @@
 
 .tabs {
     display: flex;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .tabContent {
     overflow-y: auto;
-    max-height: calc(100vh - 350px);
+    max-height: calc(100vh - 250px);
     padding-right: 8px;
+    margin-right: -8px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .tabContent::-webkit-scrollbar {
@@ -92,6 +98,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     width: 100%;
+    padding-bottom: 16px;
 }
 
 .cards {
@@ -101,52 +108,38 @@
     width: 100%;
 }
 
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
+@media (max-width: 1280px) {
+    .section {
+        max-width: 500px;
+    }
+
+    .items {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
 }
 
-.card img {
-    width: 240px;
-    height: 120px;
-    object-fit: contain;
+@media (max-width: 992px) {
+    .section {
+        max-width: 450px;
+        height: auto;
+    }
+
+    .tabContent {
+        max-height: calc(100vh - 300px);
+    }
 }
 
-.price {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 0;
-    font-family: 'Iceland', sans-serif;
-    font-size: 28px;
-    line-height: 24px;
-}
+@media (max-width: 768px) {
+    .section {
+        max-width: 100%;
+    }
 
-.name {
-    min-height: 48px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
-    line-height: 24px;
-}
+    .tabContent {
+        max-height: 450px;
+    }
 
-.count {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
-    background: #4C4CFF;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Iceland', sans-serif;
-    font-size: 28px;
-    line-height: 24px;
-    color: #F2F2F3;
+    .items {
+        grid-template-columns: 1fr;
+    }
 }

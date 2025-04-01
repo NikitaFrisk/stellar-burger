@@ -3,7 +3,7 @@ import styles from './burger-constructor.module.scss';
 import { IngredientType } from '@utils/types';
 import PropTypes from 'prop-types';
 
-export const BurgerConstructor = ({ ingredients }) => {
+export const BurgerConstructor = ({ ingredients, onOrderClick }) => {
 
     const fillings = ingredients.filter(item => item.type !== 'bun').slice(0, 7);
     const bun = ingredients.find(item => item.type === 'bun');
@@ -57,7 +57,7 @@ export const BurgerConstructor = ({ ingredients }) => {
                     <span className="text text_type_digits-medium">{totalPrice}</span>
                     <CurrencyIcon type="primary" />
                 </div>
-                <Button htmlType="button" type="primary" size="large">              
+                <Button htmlType="button" type="primary" size="large" onClick={onOrderClick}>              
                     Оформить заказ
                 </Button>
             </div>
@@ -67,6 +67,7 @@ export const BurgerConstructor = ({ ingredients }) => {
 
 BurgerConstructor.propTypes = {
     ingredients: PropTypes.arrayOf(IngredientType).isRequired,
+    onOrderClick: PropTypes.func.isRequired
 };
 
 export default BurgerConstructor;
