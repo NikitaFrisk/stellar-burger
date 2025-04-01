@@ -57,7 +57,7 @@ export const BurgerConstructor = ({ ingredients, onOrderClick }) => {
                     <span className="text text_type_digits-medium">{totalPrice}</span>
                     <CurrencyIcon type="primary" />
                 </div>
-                <Button htmlType="button" type="primary" size="large" onClick={onOrderClick}>              
+                <Button htmlType="button" type="primary" size="large" onClick={onOrderClick}>
                     Оформить заказ
                 </Button>
             </div>

@@ -20,11 +20,10 @@ export const Modal = ({ children, title, onClose }) => {
         };
     }, [onClose]);
 
-    // Get the modal root element at render time, not at module load time
     const modalRoot = document.getElementById('modals');
 
     if (!modalRoot) {
-        return null; // Handle case when modal root isn't available yet
+        return null;
     }
 
     return createPortal(

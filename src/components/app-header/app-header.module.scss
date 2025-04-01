@@ -34,18 +34,19 @@
 .rightNav {
     margin-left: auto;
 }
-.link { 
+
+.link {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start; 
+    justify-content: flex-start;
     padding: 16px 20px;
     gap: 8px;
     text-decoration: none;
     color: #8585AD;
     border-radius: 40px;
     height: 56px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     font-family: 'JetBrains Mono', monospace;
     font-style: normal;
     font-weight: 400;
@@ -60,7 +61,6 @@
 .active {
     color: #F2F2F3;
 }
-
 
 .logo {
     position: absolute;

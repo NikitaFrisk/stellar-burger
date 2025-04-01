@@ -1,15 +1,13 @@
-import { useEffect, useState } from 'react';
-import { AppHeader } from '@components/app-header/app-header';
+import { IngredientDetails } from '../ingredient-details/ingredient-details';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
-import { Modal } from '../modal/modal';
-import { IngredientDetails } from '../ingredient-details/ingredient-details';
+import { AppHeader } from '@components/app-header/app-header';
 import { OrderDetails } from '../order-details/order-details';
+import { useEffect, useState } from 'react';
+import { Modal } from '../modal/modal';
 import styles from './app.module.scss';
 
-
 const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
-
 
 export const App = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -54,25 +52,23 @@ export const App = () => {
         <div className={styles.app}>
             <AppHeader />
             <main className={styles.main}>
-                <div className={styles.container}>   
-                            <BurgerIngredients 
-                                ingredients={ingredients} 
-                                onIngredientClick={handleIngredientClick} 
-                            />
-                            <BurgerConstructor 
-                                ingredients={ingredients}
-                                onOrderClick={handleOrderClick} 
-                            />
+                <div className={styles.container}>
+                    <BurgerIngredients
+                        ingredients={ingredients}
+                        onIngredientClick={handleIngredientClick}
+                    />
+                    <BurgerConstructor
+                        ingredients={ingredients}
+                        onOrderClick={handleOrderClick}
+                    />
                 </div>
             </main>
-
 
             {selectedIngredient && (
                 <Modal title="Детали ингредиента" onClose={handleCloseModal}>
                     <IngredientDetails ingredient={selectedIngredient} />
                 </Modal>
             )}
-
 
             {isOrderModalOpen && (
                 <Modal title="" onClose={handleCloseModal}>

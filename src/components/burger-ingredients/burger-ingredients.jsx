@@ -1,8 +1,8 @@
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import IngredientCategory from './ingredient-category';
 import styles from './burger-ingredients.module.scss';
-import { IngredientType } from '@utils/types';
 import { useState, useRef, useEffect } from 'react';
+import { IngredientType } from '@utils/types';
 import PropTypes from 'prop-types';
 
 const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
@@ -21,14 +21,12 @@ const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
                 : mainRef.current;
 
         if (element && tabContentRef.current) {
-            // Calculate scroll position accounting for the container offset
             const containerTop = tabContentRef.current.getBoundingClientRect().top;
             const elementTop = element.getBoundingClientRect().top;
             tabContentRef.current.scrollTop += elementTop - containerTop;
         }
     };
 
-    // Add scroll observer to update active tab based on scroll position
     useEffect(() => {
         const tabContent = tabContentRef.current;
         if (!tabContent) return;
@@ -40,8 +38,6 @@ const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
             const bunTop = bunRef.current.getBoundingClientRect().top - containerTop;
             const sauceTop = sauceRef.current.getBoundingClientRect().top - containerTop;
             const mainTop = mainRef.current.getBoundingClientRect().top - containerTop;
-
-            // Threshold value
             const threshold = 50;
 
             if (bunTop <= threshold) {
