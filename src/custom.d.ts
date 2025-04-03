@@ -36,4 +36,14 @@ declare module '*.module.sass' {
 	export default classes;
 }
 
+declare module 'react-dnd' {
+	export function useDrag(spec: any): any[];
+	export function useDrop(spec: any): any[];
+	export function DndProvider(props: any): JSX.Element;
+}
+
+declare module 'react-dnd-html5-backend' {
+	export const HTML5Backend: any;
+}
+
 /* eslint-enable  @typescript-eslint/no-explicit-any */

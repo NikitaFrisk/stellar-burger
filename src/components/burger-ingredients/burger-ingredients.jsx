@@ -2,15 +2,21 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import IngredientCategory from './ingredient-category';
 import styles from './burger-ingredients.module.scss';
 import { useState, useRef, useEffect } from 'react';
-import { IngredientType } from '@utils/types';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIngredients, selectIngredientsLoading, selectIngredientsError } from '../../services/ingredients/ingredientsSlice';
+import { setCurrentIngredient } from '../../services/ingredient-details/ingredientDetailsSlice';
 
-const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
+const BurgerIngredients = () => {
     const [current, setCurrent] = useState('bun');
     const sauceRef = useRef(null);
     const mainRef = useRef(null);
     const bunRef = useRef(null);
     const tabContentRef = useRef(null);
+    
+    const dispatch = useDispatch();
+    const ingredients = useSelector(selectIngredients);
+    const isLoading = useSelector(selectIngredientsLoading);
+    const error = useSelector(selectIngredientsError);
 
     const handleTabClick = (value) => {
         setCurrent(value);
@@ -57,6 +63,18 @@ const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
         return () => tabContent.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const handleIngredientClick = (ingredient) => {
+        dispatch(setCurrentIngredient(ingredient));
+    };
+
+    if (isLoading) {
+        return <div className={styles.section}>Загрузка ингредиентов...</div>;
+    }
+
+    if (error) {
+        return <div className={styles.section}>Произошла ошибка при загрузке ингредиентов: {error}</div>;
+    }
+
     const bunIngredients = ingredients.filter(item => item.type === 'bun');
     const sauceIngredients = ingredients.filter(item => item.type === 'sauce');
     const mainIngredients = ingredients.filter(item => item.type === 'main');
@@ -76,28 +94,23 @@ const BurgerIngredients = ({ ingredients, onIngredientClick }) => {
                     title="Булки"
                     ingredients={bunIngredients}
                     titleRef={bunRef}
-                    onIngredientClick={onIngredientClick}
+                    onIngredientClick={handleIngredientClick}
                 />
                 <IngredientCategory
                     title="Соусы"
                     ingredients={sauceIngredients}
                     titleRef={sauceRef}
-                    onIngredientClick={onIngredientClick}
+                    onIngredientClick={handleIngredientClick}
                 />
                 <IngredientCategory
                     title="Начинки"
                     ingredients={mainIngredients}
                     titleRef={mainRef}
-                    onIngredientClick={onIngredientClick}
+                    onIngredientClick={handleIngredientClick}
                 />
             </div>
         </section>
     );
-};
-
-BurgerIngredients.propTypes = {
-    ingredients: PropTypes.arrayOf(IngredientType).isRequired,
-    onIngredientClick: PropTypes.func.isRequired
 };
 
 export default BurgerIngredients;

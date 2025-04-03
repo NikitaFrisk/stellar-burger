@@ -115,7 +115,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  line-clamp: 3; // фикс ошибки -webkit-line-clamp: 3
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   max-height: 72px;
   font-size: 16px;
@@ -151,4 +151,14 @@
 .price span {
   font-size: 48px;
   line-height: 36px;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  border: 2px dashed #4C4CFF;
+  border-radius: 16px;
+  background-color: rgba(76, 76, 255, 0.05);
 }
