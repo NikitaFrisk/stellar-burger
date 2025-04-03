@@ -1,0 +1,74 @@
+.header {
+    position: relative;
+    background-color: #1C1C21;
+    height: 88px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navBar {
+    max-width: 1280px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: relative;
+}
+
+.navGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    z-index: 1;
+}
+
+.leftNav {
+    margin-right: auto;
+}
+
+.rightNav {
+    margin-left: auto;
+}
+
+.link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px 20px;
+    gap: 8px;
+    text-decoration: none;
+    color: #8585AD;
+    border-radius: 40px;
+    height: 56px;
+    box-sizing: border-box;
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.link:hover {
+    color: #F2F2F3;
+}
+
+.active {
+    color: #F2F2F3;
+}
+
+.logo {
+    position: absolute;
+    left: 49%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    z-index: 2;
+}

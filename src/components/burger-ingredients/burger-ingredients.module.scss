@@ -1,0 +1,145 @@
+.ingredientsList {
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #8585ad #2f2f37;
+}
+
+.ingredientsList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ingredientsList::-webkit-scrollbar-track {
+    background: #2f2f37;
+}
+
+.ingredientsList::-webkit-scrollbar-thumb {
+    background: #8585ad;
+}
+
+@media (max-width: 768px) {
+    .ingredientsList {
+        max-height: 300px;
+    }
+}
+
+.section {
+    width: 100%;
+    max-width: 580px;
+    flex-direction: column;
+    margin-top: 0;
+    padding-top: 40px;
+    display: flex;
+    height: calc(100vh - 88px - 40px);
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tabContent {
+    overflow-y: auto;
+    max-height: calc(100vh - 250px);
+    padding-right: 8px;
+    margin-right: -8px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.tabContent::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tabContent::-webkit-scrollbar-track {
+    background: #2F2F37;
+}
+
+.tabContent::-webkit-scrollbar-thumb {
+    background: #8585AD;
+    border-radius: 3px;
+}
+
+.ingredientsContainer {
+    height: calc(100vh - 300px);
+    overflow-y: scroll;
+    padding-right: 8px;
+}
+
+.ingredientsContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ingredientsContainer::-webkit-scrollbar-track {
+    background: #2F2F37;
+}
+
+.ingredientsContainer::-webkit-scrollbar-thumb {
+    background: #8585AD;
+    border-radius: 3px;
+}
+
+.category {
+    margin-bottom: 40px;
+}
+
+.categoryTitle {
+    margin-bottom: 24px;
+}
+
+.items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    width: 100%;
+    padding-bottom: 16px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 24px;
+    width: 100%;
+}
+
+@media (max-width: 1280px) {
+    .section {
+        max-width: 500px;
+    }
+
+    .items {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 992px) {
+    .section {
+        max-width: 450px;
+        height: auto;
+    }
+
+    .tabContent {
+        max-height: calc(100vh - 300px);
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        max-width: 100%;
+    }
+
+    .tabContent {
+        max-height: 450px;
+    }
+
+    .items {
+        grid-template-columns: 1fr;
+    }
+}
