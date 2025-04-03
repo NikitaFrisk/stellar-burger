@@ -3,65 +3,44 @@ import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import { AppHeader } from '@components/app-header/app-header';
 import { OrderDetails } from '../order-details/order-details';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Modal } from '../modal/modal';
 import styles from './app.module.scss';
-
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchIngredients } from '../../services/ingredients/ingredientsSlice';
+import { clearCurrentIngredient, selectCurrentIngredient } from '../../services/ingredient-details/ingredientDetailsSlice';
+import { selectOrder, clearOrder } from '../../services/order/orderSlice';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 export const App = () => {
-    const [ingredients, setIngredients] = useState([]);
-    const [status, setIngredientsStatus] = useState('loading');
-    const [selectedIngredient, setSelectedIngredient] = useState(null);
-    const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+    const dispatch = useDispatch();
+    const selectedIngredient = useSelector(selectCurrentIngredient);
+    const order = useSelector(selectOrder);
 
     useEffect(() => {
-        setIngredientsStatus('loading');
-        fetch(API_URL)
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! Status: ${res.status}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                setIngredients(data.data);
-                setIngredientsStatus('done');
-            })
-            .catch((error) => {
-                setIngredientsStatus('error');
-                console.log(error);
-            });
-    }, []);
-
-    const handleIngredientClick = (ingredient) => {
-        setSelectedIngredient(ingredient);
-    };
-
+        dispatch(fetchIngredients());
+    }, [dispatch]);
 
     const handleCloseModal = () => {
-        setSelectedIngredient(null);
-        setIsOrderModalOpen(false);
-    };
-
-    const handleOrderClick = () => {
-        setIsOrderModalOpen(true);
+        if (selectedIngredient) {
+            dispatch(clearCurrentIngredient());
+        }
+        if (order) {
+            dispatch(clearOrder());
+        }
     };
 
     return (
         <div className={styles.app}>
             <AppHeader />
             <main className={styles.main}>
-                <div className={styles.container}>
-                    <BurgerIngredients
-                        ingredients={ingredients}
-                        onIngredientClick={handleIngredientClick}
-                    />
-                    <BurgerConstructor
-                        ingredients={ingredients}
-                        onOrderClick={handleOrderClick}
-                    />
-                </div>
+                <DndProvider backend={HTML5Backend}>
+                    <div className={styles.container}>
+                        <BurgerIngredients />
+                        <BurgerConstructor />
+                    </div>
+                </DndProvider>
             </main>
 
             {selectedIngredient && (
@@ -70,9 +49,9 @@ export const App = () => {
                 </Modal>
             )}
 
-            {isOrderModalOpen && (
+            {order && (
                 <Modal title="" onClose={handleCloseModal}>
-                    <OrderDetails />
+                    <OrderDetails orderNumber={order.number} />
                 </Modal>
             )}
         </div>
