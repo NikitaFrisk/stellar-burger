@@ -1,5 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
 declare module '*.svg' {
 	import React = require('react');
 	export const ReactComponent: React.FunctionComponent<
@@ -45,5 +43,3 @@ declare module 'react-dnd' {
 declare module 'react-dnd-html5-backend' {
 	export const HTML5Backend: any;
 }
-
-/* eslint-enable  @typescript-eslint/no-explicit-any */

@@ -7,7 +7,7 @@ export const ENDPOINTS = {
 
 export const checkResponse = async (res) => {
   if (!res.ok) {
-    throw new Error(`HTTP error! Status: ${res.status}`);
+    throw new Error(`!!!HTTP error. Status: ${res.status}`);
   }
   
   const data = await res.json();

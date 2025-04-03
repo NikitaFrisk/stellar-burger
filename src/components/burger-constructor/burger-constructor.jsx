@@ -9,7 +9,7 @@ import { createOrder } from '../../services/order/orderSlice';
 const DraggableConstructorElement = ({ item, index, handleRemove }) => {
   const dispatch = useDispatch();
   const ref = useRef(null);
-  
+
   const [{ isDragging }, drag] = useDrag({
     type: 'constructorElement',
     item: () => ({ index }),
@@ -17,35 +17,35 @@ const DraggableConstructorElement = ({ item, index, handleRemove }) => {
       isDragging: monitor.isDragging()
     })
   });
-  
+
   const [, drop] = useDrop({
     accept: 'constructorElement',
     hover: (draggedItem, monitor) => {
       if (!ref.current) {
         return;
       }
-      
+
       const dragIndex = draggedItem.index;
       const hoverIndex = index;
-      
+
       if (dragIndex === hoverIndex) {
         return;
       }
-      
-      dispatch(moveIngredient({ 
-        dragIndex, 
-        hoverIndex 
+
+      dispatch(moveIngredient({
+        dragIndex,
+        hoverIndex
       }));
-      
+
       draggedItem.index = hoverIndex;
     }
   });
-  
+
   drag(drop(ref));
-  
+
   return (
-    <div 
-      className={styles.ingredient} 
+    <div
+      className={styles.ingredient}
       ref={ref}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
@@ -67,7 +67,7 @@ export const BurgerConstructor = () => {
   const bun = useSelector(selectBun);
   const fillings = useSelector(selectIngredients);
   const totalPrice = useSelector(selectTotalPrice);
-  
+
   const [{ isHover }, dropTargetRef] = useDrop({
     accept: 'ingredient',
     drop: (item) => {
@@ -81,36 +81,36 @@ export const BurgerConstructor = () => {
       isHover: monitor.isOver()
     })
   });
-  
+
   const handleRemoveIngredient = useCallback((uuid) => {
     dispatch(removeIngredient(uuid));
   }, [dispatch]);
-  
+
   const handleOrderClick = useCallback(() => {
     if (!bun) return;
-    
+
     const ingredientIds = [
       bun._id,
       ...fillings.map(item => item._id),
       bun._id
     ];
-    
+
     dispatch(createOrder(ingredientIds));
   }, [dispatch, bun, fillings]);
-  
+
   const containerStyle = {
     border: isHover ? '1px dashed #4C4CFF' : 'none',
     borderRadius: '8px',
     padding: isHover ? '16px' : '16px 0',
     transition: 'all 0.2s ease'
   };
-  
+
   const isOrderEnabled = bun && fillings.length > 0;
-  
+
   return (
     <section className={styles.section}>
-      <div 
-        className={styles.constructorElements} 
+      <div
+        className={styles.constructorElements}
         ref={dropTargetRef}
         style={containerStyle}
       >
@@ -175,10 +175,10 @@ export const BurgerConstructor = () => {
           <span className="text text_type_digits-medium">{totalPrice}</span>
           <CurrencyIcon type="primary" />
         </div>
-        <Button 
-          htmlType="button" 
-          type="primary" 
-          size="large" 
+        <Button
+          htmlType="button"
+          type="primary"
+          size="large"
           onClick={handleOrderClick}
           disabled={!isOrderEnabled}
         >

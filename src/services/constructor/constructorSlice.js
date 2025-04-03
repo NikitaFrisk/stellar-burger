@@ -27,29 +27,29 @@ function createSafeConstructorReducer() {
       setBun: (state, action) => {
         state.bun = action.payload;
       },
-      
+
       addIngredient: (state, action) => {
         if (!Array.isArray(state.ingredients)) {
           state.ingredients = [];
         }
-        
+
         state.ingredients.push(action.payload);
       },
-      
+
       removeIngredient: (state, action) => {
         if (Array.isArray(state.ingredients)) {
-          state.ingredients = state.ingredients.filter(item => 
+          state.ingredients = state.ingredients.filter(item =>
             item.uuid !== action.payload
           );
         }
       },
-      
+
       moveIngredient: (state, action) => {
         if (!Array.isArray(state.ingredients)) return;
-        
+
         const { dragIndex, hoverIndex } = action.payload;
         const draggedItem = state.ingredients[dragIndex];
-        
+
         if (draggedItem) {
           const newIngredients = [...state.ingredients];
           newIngredients.splice(dragIndex, 1);
@@ -57,32 +57,32 @@ function createSafeConstructorReducer() {
           state.ingredients = newIngredients;
         }
       },
-      
+
       clearConstructor: (state) => {
         state.bun = null;
         state.ingredients = [];
       }
     }
   });
-  
+
   return (state, action) => {
     if (state === undefined) {
       return initialState;
     }
-    
+
     if (typeof state === 'function') {
-      console.log('⚠️ Encountered function state during Redux processing, returning fresh initial state');
+      console.log('!!!Encountered function state during Redux processing, returning fresh initial state');
       return { ...initialState };
     }
-    
+
     if (!state.ingredients) {
-      console.log('⚠️ Incomplete state structure detected, rebuilding state');
+      console.log('!!!Incomplete state structure detected, rebuilding state');
       return {
         ...initialState,
         ...state,
       };
     }
-    
+
     return slice.reducer(state, action);
   };
 }
@@ -94,29 +94,29 @@ const constructorSlice = createSlice({
     setBun: (state, action) => {
       state.bun = action.payload;
     },
-    
+
     addIngredient: (state, action) => {
       if (!Array.isArray(state.ingredients)) {
         state.ingredients = [];
       }
-      
+
       state.ingredients.push(action.payload);
     },
-    
+
     removeIngredient: (state, action) => {
       if (Array.isArray(state.ingredients)) {
-        state.ingredients = state.ingredients.filter(item => 
+        state.ingredients = state.ingredients.filter(item =>
           item.uuid !== action.payload
         );
       }
     },
-    
+
     moveIngredient: (state, action) => {
       if (!Array.isArray(state.ingredients)) return;
-      
+
       const { dragIndex, hoverIndex } = action.payload;
       const draggedItem = state.ingredients[dragIndex];
-      
+
       if (draggedItem) {
         const newIngredients = [...state.ingredients];
         newIngredients.splice(dragIndex, 1);
@@ -124,7 +124,7 @@ const constructorSlice = createSlice({
         state.ingredients = newIngredients;
       }
     },
-    
+
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];
@@ -170,10 +170,10 @@ export const selectTotalPrice = createSelector(
   [getBun, getIngredientsList],
   (bun, ingredients) => {
     const bunPrice = bun ? bun.price * 2 : 0;
-    const ingredientsPrice = Array.isArray(ingredients) 
-      ? ingredients.reduce((sum, item) => sum + (item?.price || 0), 0) 
+    const ingredientsPrice = Array.isArray(ingredients)
+      ? ingredients.reduce((sum, item) => sum + (item?.price || 0), 0)
       : 0;
-    
+
     return bunPrice + ingredientsPrice;
   }
 );

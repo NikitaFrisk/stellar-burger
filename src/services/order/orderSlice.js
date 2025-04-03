@@ -48,7 +48,7 @@ export const createOrder = (ingredients) => {
         },
         body: JSON.stringify({ ingredients })
       });
-      
+
       const data = await checkResponse(response);
       dispatch(orderSuccess(data.order));
       dispatch(clearConstructor());

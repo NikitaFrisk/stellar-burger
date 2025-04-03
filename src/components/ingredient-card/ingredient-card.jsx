@@ -1,15 +1,15 @@
+import { selectBun, selectIngredients } from '../../services/constructor/constructorSlice';
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './ingredient-card.module.scss';
 import { IngredientType } from '@utils/types';
-import PropTypes from 'prop-types';
-import { useDrag } from 'react-dnd';
 import { useSelector } from 'react-redux';
-import { selectBun, selectIngredients } from '../../services/constructor/constructorSlice';
+import { useDrag } from 'react-dnd';
+import PropTypes from 'prop-types';
 
 const IngredientCard = ({ ingredient, onClick }) => {
   const constructorIngredients = useSelector(selectIngredients);
   const constructorBun = useSelector(selectBun);
-  
+
   const count = ingredient.type === 'bun'
     ? (constructorBun && constructorBun._id === ingredient._id ? 1 : 0)
     : constructorIngredients.filter(item => item._id === ingredient._id).length;
@@ -23,8 +23,8 @@ const IngredientCard = ({ ingredient, onClick }) => {
   });
 
   return (
-    <div 
-      className={styles.card} 
+    <div
+      className={styles.card}
       onClick={onClick}
       ref={dragRef}
       style={{ opacity: isDragging ? 0.5 : 1 }}

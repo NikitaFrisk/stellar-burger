@@ -12,7 +12,7 @@ const BurgerIngredients = () => {
     const mainRef = useRef(null);
     const bunRef = useRef(null);
     const tabContentRef = useRef(null);
-    
+
     const dispatch = useDispatch();
     const ingredients = useSelector(selectIngredients);
     const isLoading = useSelector(selectIngredientsLoading);
