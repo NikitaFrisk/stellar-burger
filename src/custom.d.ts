@@ -1,5 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
 declare module '*.svg' {
 	import React = require('react');
 	export const ReactComponent: React.FunctionComponent<
@@ -36,4 +34,12 @@ declare module '*.module.sass' {
 	export default classes;
 }
 
-/* eslint-enable  @typescript-eslint/no-explicit-any */
+declare module 'react-dnd' {
+	export function useDrag(spec: any): any[];
+	export function useDrop(spec: any): any[];
+	export function DndProvider(props: any): JSX.Element;
+}
+
+declare module 'react-dnd-html5-backend' {
+	export const HTML5Backend: any;
+}
