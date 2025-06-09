@@ -5,46 +5,51 @@ import styles from './modal.module.scss';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 
-export const Modal = ({ children, title, onClose }) => {
-    useEffect(() => {
-        const handleEscKeydown = (event) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
-        };
+export const Modal = ({ children, title, onClose, closable = true }) => {
+	useEffect(() => {
+		const handleEscKeydown = (event) => {
+			if (event.key === 'Escape' && closable) {
+				onClose();
+			}
+		};
 
-        document.addEventListener('keydown', handleEscKeydown);
+		document.addEventListener('keydown', handleEscKeydown);
 
-        return () => {
-            document.removeEventListener('keydown', handleEscKeydown);
-        };
-    }, [onClose]);
+		return () => {
+			document.removeEventListener('keydown', handleEscKeydown);
+		};
+	}, [onClose, closable]);
 
-    const modalRoot = document.getElementById('modals');
+	const modalRoot = document.getElementById('modals');
 
-    if (!modalRoot) {
-        return null;
-    }
+	if (!modalRoot) {
+		return null;
+	}
 
-    return createPortal(
-        <>
-            <ModalOverlay onClick={onClose} />
-            <div className={styles.modal}>
-                <div className={styles.header}>
-                    <h2 className={`${styles.title} text text_type_main-large`}>{title}</h2>
-                    <button className={styles.closeButton} onClick={onClose}>
-                        <CloseIcon type="primary" />
-                    </button>
-                </div>
-                <div className={styles.content}>{children}</div>
-            </div>
-        </>,
-        modalRoot
-    );
+	return createPortal(
+		<>
+			<ModalOverlay onClick={closable ? onClose : () => {}} />
+			<div className={styles.modal}>
+				<div className={styles.header}>
+					<h2 className={`${styles.title} text text_type_main-large`}>
+						{title}
+					</h2>
+					{closable && (
+						<button className={styles.closeButton} onClick={onClose}>
+							<CloseIcon type='primary' />
+						</button>
+					)}
+				</div>
+				<div className={styles.content}>{children}</div>
+			</div>
+		</>,
+		modalRoot
+	);
 };
 
 Modal.propTypes = {
-    children: PropTypes.node.isRequired,
-    title: PropTypes.string,
-    onClose: PropTypes.func.isRequired,
+	children: PropTypes.node.isRequired,
+	title: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
+	closable: PropTypes.bool,
 };
