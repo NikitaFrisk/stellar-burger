@@ -11,7 +11,7 @@ root.render(
 	<StrictMode>
 		<Provider store={store}>
 			<App />
-			<div id="modals"></div>
+			<div id='modals'></div>
 		</Provider>
 	</StrictMode>
 );
