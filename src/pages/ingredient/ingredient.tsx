@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import { IngredientDetails } from '../../components/ingredient-details/ingredient-details';
-import { selectIngredients, selectIngredientsLoading, fetchIngredients } from '../../services/ingredients/ingredientsSlice';
+import {
+	selectIngredients,
+	selectIngredientsLoading,
+	fetchIngredients,
+} from '../../services/ingredients/ingredientsSlice';
 import { setCurrentIngredient } from '../../services/ingredient-details/ingredientDetailsSlice';
 import { Loader } from '../../components/loader/loader';
 import styles from './ingredient.module.scss';
@@ -42,7 +46,7 @@ export const IngredientPage = () => {
 		return (
 			<div className={styles.container}>
 				<div className={styles.loading}>
-					<Loader text="Загружаем ингредиенты..." size="large" />
+					<Loader text='Загружаем ингредиенты...' size='large' />
 				</div>
 			</div>
 		);
