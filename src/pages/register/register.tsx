@@ -34,7 +34,7 @@ export const RegisterPage = () => {
 		};
 	}, [dispatch]);
 
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		dispatch(register(values));
 	};

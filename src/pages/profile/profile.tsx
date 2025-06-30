@@ -73,10 +73,10 @@ export const ProfilePage = () => {
 		};
 	}, [dispatch]);
 
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const updateData: any = {};
+		const updateData: { name?: string; email?: string; password?: string } = {};
 
 		if (values.name !== originalData.name) {
 			updateData.name = values.name;

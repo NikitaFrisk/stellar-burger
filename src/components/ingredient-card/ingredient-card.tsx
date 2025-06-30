@@ -57,9 +57,17 @@ const IngredientCard: React.FC<IIngredientCardProps> = ({ ingredient, onClick })
 	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			handleClick(e as any);
+			// Вызываем ту же логику, что и в handleClick, но без события мыши
+			dispatch(setCurrentIngredient(ingredient));
+			if (onClick) {
+				onClick();
+			}
+			sessionStorage.setItem('modalIngredient', ingredient._id);
+			navigate(`/ingredients/${ingredient._id}`, {
+				state: { background: location },
+			});
 		}
-	}, [handleClick]);
+	}, [dispatch, ingredient, onClick, navigate, location]);
 
 	return (
 		<div

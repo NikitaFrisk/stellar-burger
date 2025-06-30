@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ENDPOINTS, request } from '../../utils/api-constants';
+import { ENDPOINTS, requestData } from '../../utils/api-constants';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
 
 // Типы для пользователя и состояния
@@ -58,7 +58,7 @@ export const register = createAsyncThunk<AuthResponse, RegisterData>(
 	'auth/register',
 	async (userData, { rejectWithValue }) => {
 		try {
-			const data = await request(ENDPOINTS.REGISTER, {
+			const data = await requestData<AuthResponse>(ENDPOINTS.REGISTER, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export const login = createAsyncThunk<AuthResponse, LoginData>(
 	'auth/login',
 	async (userData, { rejectWithValue }) => {
 		try {
-			const data = await request(ENDPOINTS.LOGIN, {
+			const data = await requestData<AuthResponse>(ENDPOINTS.LOGIN, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export const logoutUser = createAsyncThunk<void, void>(
 		try {
 			const refreshToken = getCookie('refreshToken');
 
-			await request(ENDPOINTS.LOGOUT, {
+			await requestData(ENDPOINTS.LOGOUT, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export const refreshToken = createAsyncThunk<
 	try {
 		const refreshTokenValue = getCookie('refreshToken');
 
-		const data = await request(ENDPOINTS.TOKEN, {
+		const data = await requestData<{ accessToken: string; refreshToken: string }>(ENDPOINTS.TOKEN, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ export const getUser = createAsyncThunk<{ user: User }, void>(
 			let accessToken = localStorage.getItem('accessToken');
 
 			try {
-				const data = await request(ENDPOINTS.USER, {
+				const data = await requestData<{ user: User }>(ENDPOINTS.USER, {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export const getUser = createAsyncThunk<{ user: User }, void>(
 					if (refreshResult.type === 'auth/refreshToken/fulfilled') {
 						accessToken = (refreshResult.payload as any).accessToken;
 
-						const data = await request(ENDPOINTS.USER, {
+						const data = await requestData<{ user: User }>(ENDPOINTS.USER, {
 							method: 'GET',
 							headers: {
 								'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ export const updateUser = createAsyncThunk<{ user: User }, UpdateUserData>(
 			let accessToken = localStorage.getItem('accessToken');
 
 			try {
-				const data = await request(ENDPOINTS.USER, {
+				const data = await requestData<{ user: User }>(ENDPOINTS.USER, {
 					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ export const updateUser = createAsyncThunk<{ user: User }, UpdateUserData>(
 					if (refreshResult.type === 'auth/refreshToken/fulfilled') {
 						accessToken = (refreshResult.payload as any).accessToken;
 
-						const data = await request(ENDPOINTS.USER, {
+						const data = await requestData<{ user: User }>(ENDPOINTS.USER, {
 							method: 'PATCH',
 							headers: {
 								'Content-Type': 'application/json',
@@ -246,13 +246,14 @@ export const requestPasswordReset = createAsyncThunk<
 	string
 >('auth/requestPasswordReset', async (email, { rejectWithValue }) => {
 	try {
-		const data = await request(ENDPOINTS.PASSWORD_RESET, {
+		const data = await requestData<{ success: boolean }>(ENDPOINTS.PASSWORD_RESET, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ email }),
 		});
+
 		return data;
 	} catch (error: any) {
 		return rejectWithValue(error.message);
@@ -262,15 +263,16 @@ export const requestPasswordReset = createAsyncThunk<
 export const resetPassword = createAsyncThunk<
 	{ success: boolean },
 	ResetPasswordData
->('auth/resetPassword', async ({ password, token }, { rejectWithValue }) => {
+>('auth/resetPassword', async (resetData, { rejectWithValue }) => {
 	try {
-		const data = await request(ENDPOINTS.PASSWORD_RESET_CONFIRM, {
+		const data = await requestData<{ success: boolean }>(ENDPOINTS.PASSWORD_RESET_CONFIRM, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ password, token }),
+			body: JSON.stringify(resetData),
 		});
+
 		return data;
 	} catch (error: any) {
 		return rejectWithValue(error.message);

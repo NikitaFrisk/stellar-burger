@@ -33,7 +33,7 @@ export const ForgotPasswordPage = () => {
 		};
 	}, [dispatch]);
 
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		dispatch(requestPasswordReset(values.email));
 	};

@@ -36,7 +36,7 @@ export const LoginPage = () => {
 		};
 	}, [dispatch]);
 
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		// Очищаем предыдущую ошибку при новой попытке
 		if (error) {

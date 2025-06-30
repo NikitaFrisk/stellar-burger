@@ -29,8 +29,8 @@ export const ProtectedRoute: React.FC<IProtectedRouteProps> = ({ element, onlyUn
 
 	// Для страниц только для неавторизованных (логин, регистрация)
 	if (onlyUnAuth && isAuthenticated) {
-		const { from } = (location.state as any) || { from: { pathname: '/' } };
-		return <Navigate to={from} />;
+		const { from } = (location.state as { from?: { pathname: string } }) || { from: { pathname: '/' } };
+		return <Navigate to={from?.pathname || '/'} />;
 	}
 
 	// Для приватных страниц - проверяем только isAuthenticated

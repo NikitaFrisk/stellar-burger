@@ -8,7 +8,7 @@ import styles from './auth-form.module.scss';
 interface IAuthFormProps {
 	title: string;
 	children: ReactNode;
-	onSubmit: (e: FormEvent) => void;
+	onSubmit: (e: FormEvent<HTMLFormElement>) => void;
 	buttonText: string;
 	loadingText: string;
 	isValid: boolean;

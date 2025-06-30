@@ -14,8 +14,16 @@ export const ENDPOINTS = {
 	PASSWORD_RESET_CONFIRM: '/password-reset/reset',
 } as const;
 
+// Интерфейс для ответа от API
+export interface IApiResponse<T = any> {
+	success: boolean;
+	data?: T;
+	message?: string;
+	[key: string]: any; // для дополнительных полей от API
+}
+
 // создаем функцию проверки ответа на `ok`
-const checkResponse = (res: Response): Promise<any> => {
+const checkResponse = (res: Response): Promise<IApiResponse> => {
 	if (res.ok) {
 		return res.json();
 	}
@@ -24,12 +32,12 @@ const checkResponse = (res: Response): Promise<any> => {
 };
 
 // создаем функцию проверки на `success`
-const checkSuccess = (res: any): any => {
+const checkSuccess = <T>(res: IApiResponse<T>): IApiResponse<T> => {
 	if (res && res.success) {
 		return res;
 	}
 	// не забываем выкидывать ошибку, чтобы она попала в `catch`
-	return Promise.reject(`Ответ не success: ${res}`);
+	throw new Error(`Ответ не success: ${JSON.stringify(res)}`);
 };
 
 /**
@@ -59,11 +67,23 @@ const checkSuccess = (res: any): any => {
  *   body: JSON.stringify(userData)
  * });
  */
-export const request = (endpoint: string, options?: RequestInit): Promise<any> => {
+export const request = <T = any>(endpoint: string, options?: RequestInit): Promise<IApiResponse<T>> => {
 	// а также в ней базовый урл сразу прописывается, чтобы не дублировать в каждом запросе
 	return fetch(`${BASE_URL}${endpoint}`, options)
 		.then(checkResponse)
-		.then(checkSuccess);
+		.then(checkSuccess<T>);
+};
+
+/**
+ * Функция для Redux thunks - извлекает данные из IApiResponse
+ * Возвращает непосредственно данные, а не обертку
+ */
+export const requestData = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
+	const response = await request<T>(endpoint, options);
+	
+	// Извлекаем данные из ответа API
+	// Если есть поле data, возвращаем его, иначе весь response (для совместимости)
+	return (response.data !== undefined ? response.data : response) as T;
 };
 
 // Оставляем для обратной совместимости, но лучше использовать request

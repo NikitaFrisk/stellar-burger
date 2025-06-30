@@ -25,6 +25,19 @@ import { selectIsAuthenticated } from '../../services/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import { IIngredient, IConstructorIngredient } from '@utils/types';
 
+// Типы для react-dnd
+interface IDragItem {
+	index: number;
+}
+
+interface IDragCollectedProps {
+	isDragging: boolean;
+}
+
+interface IDropCollectedProps {
+	isHover: boolean;
+}
+
 interface IDraggableConstructorElementProps {
 	item: IConstructorIngredient;
 	index: number;
@@ -45,11 +58,11 @@ const DraggableConstructorElement: React.FC<IDraggableConstructorElementProps> =
 		collect: (monitor: any) => ({
 			isDragging: monitor.isDragging(),
 		}),
-	}) as any;
+	});
 
 	const [, drop] = useDrop({
 		accept: 'constructorElement',
-		hover: (draggedItem: any) => {
+		hover: (draggedItem: IDragItem) => {
 			if (!ref.current) {
 				return;
 			}
@@ -113,7 +126,7 @@ export const BurgerConstructor: React.FC = () => {
 		collect: (monitor: any) => ({
 			isHover: monitor.isOver(),
 		}),
-	}) as any;
+	});
 
 	const handleRemoveIngredient = useCallback(
 		(uuid: string) => {
