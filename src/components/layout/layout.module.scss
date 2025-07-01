@@ -1,0 +1,63 @@
+.layout {
+	min-height: calc(100vh - 88px); // 88px - высота хедера
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin: 0 auto;
+}
+
+// Максимальная ширина контейнера
+.small {
+	max-width: 640px;
+}
+
+.medium {
+	max-width: 1024px;
+}
+
+.large {
+	max-width: 1280px;
+}
+
+.full {
+	max-width: 100%;
+}
+
+// Внутренние отступы
+.padding-none {
+	padding: 0;
+}
+
+.padding-small {
+	padding: 16px;
+}
+
+.padding-medium {
+	padding: 24px 40px;
+}
+
+.padding-large {
+	padding: 40px 60px;
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+	.layout {
+		min-height: calc(100vh - 72px); // Уменьшенный хедер на мобильных
+	}
+
+	.padding-medium {
+		padding: 16px 20px;
+	}
+
+	.padding-large {
+		padding: 24px 20px;
+	}
+}
+
+@media (max-width: 480px) {
+	.padding-medium,
+	.padding-large {
+		padding: 16px;
+	}
+} 

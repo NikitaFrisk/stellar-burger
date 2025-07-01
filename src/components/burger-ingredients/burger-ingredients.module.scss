@@ -42,7 +42,7 @@
     margin-bottom: 20px;
 }
 
-.tabContent {
+.content {
     overflow-y: auto;
     max-height: calc(100vh - 250px);
     padding-right: 8px;
@@ -53,15 +53,15 @@
     position: relative;
 }
 
-.tabContent::-webkit-scrollbar {
+.content::-webkit-scrollbar {
     width: 8px;
 }
 
-.tabContent::-webkit-scrollbar-track {
+.content::-webkit-scrollbar-track {
     background: #2F2F37;
 }
 
-.tabContent::-webkit-scrollbar-thumb {
+.content::-webkit-scrollbar-thumb {
     background: #8585AD;
     border-radius: 3px;
 }
@@ -125,7 +125,7 @@
         height: auto;
     }
 
-    .tabContent {
+    .content {
         max-height: calc(100vh - 300px);
     }
 }
@@ -135,7 +135,7 @@
         max-width: 100%;
     }
 
-    .tabContent {
+    .content {
         max-height: 450px;
     }
 

@@ -1,33 +1,29 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../services/store';
+import { useAppDispatch } from '../../services/store';
 import {
 	Input,
 	EmailInput,
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { 
-	getUser, 
-	updateUser, 
+import {
+	getUser,
+	updateUser,
 	logoutUser,
 	clearError,
-	selectUser,
-	selectAuthLoading,
-	selectAuthError,
-	selectIsAuthenticated
 } from '../../services/auth/authSlice';
+import { useForm, useAuth } from '../../hooks';
+import { COMPONENT_CLASSES } from '../../utils/ui-classes';
+import { LoadingSpinner } from '../../components/ui';
 import styles from './profile.module.scss';
 
 export const ProfilePage = () => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const user = useAppSelector(selectUser);
-	const loading = useAppSelector(selectAuthLoading);
-	const error = useAppSelector(selectAuthError);
-	const isAuthenticated = useAppSelector(selectIsAuthenticated);
+	const { user, loading, error, isAuthenticated } = useAuth();
 
-	const [formData, setFormData] = useState({
+	const { values, handleChange, setValues } = useForm({
 		name: '',
 		email: '',
 		password: '',
@@ -45,7 +41,7 @@ export const ProfilePage = () => {
 			navigate('/login');
 			return;
 		}
-		
+
 		// Получаем данные пользователя при загрузке компонента
 		if (!user) {
 			dispatch(getUser());
@@ -58,18 +54,18 @@ export const ProfilePage = () => {
 				name: user.name,
 				email: user.email,
 			};
-			setFormData({ ...userData, password: '' });
+			setValues({ ...userData, password: '' });
 			setOriginalData(userData);
 		}
-	}, [user]);
+	}, [user, setValues]);
 
 	useEffect(() => {
-		const nameChanged = formData.name !== originalData.name;
-		const emailChanged = formData.email !== originalData.email;
-		const passwordChanged = formData.password !== '';
-		
+		const nameChanged = values.name !== originalData.name;
+		const emailChanged = values.email !== originalData.email;
+		const passwordChanged = values.password !== '';
+
 		setHasChanges(nameChanged || emailChanged || passwordChanged);
-	}, [formData, originalData]);
+	}, [values, originalData]);
 
 	useEffect(() => {
 		return () => {
@@ -77,32 +73,21 @@ export const ProfilePage = () => {
 		};
 	}, [dispatch]);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-		if (error) {
-			dispatch(clearError());
-		}
-	};
-
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		
-		const updateData: any = {};
-		
-		if (formData.name !== originalData.name) {
-			updateData.name = formData.name;
+
+		const updateData: { name?: string; email?: string; password?: string } = {};
+
+		if (values.name !== originalData.name) {
+			updateData.name = values.name;
 		}
-		
-		if (formData.email !== originalData.email) {
-			updateData.email = formData.email;
+
+		if (values.email !== originalData.email) {
+			updateData.email = values.email;
 		}
-		
-		if (formData.password) {
-			updateData.password = formData.password;
+
+		if (values.password) {
+			updateData.password = values.password;
 		}
 
 		if (Object.keys(updateData).length > 0) {
@@ -112,7 +97,7 @@ export const ProfilePage = () => {
 
 	const handleCancel = () => {
 		if (user) {
-			setFormData({
+			setValues({
 				name: user.name,
 				email: user.email,
 				password: '',
@@ -130,7 +115,7 @@ export const ProfilePage = () => {
 		return (
 			<div className={styles.container}>
 				<div className={styles.content}>
-					<p className='text text_type_main-medium'>Загрузка...</p>
+					<LoadingSpinner text="Загрузка профиля..." />
 				</div>
 			</div>
 		);
@@ -146,26 +131,27 @@ export const ProfilePage = () => {
 							`${styles.navLink} ${isActive ? styles.active : ''}`
 						}
 						end>
-						<span className='text text_type_main-medium'>Профиль</span>
+						<span className={COMPONENT_CLASSES.NAVIGATION.LINK_ACTIVE}>Профиль</span>
 					</NavLink>
 					<NavLink
 						to='/profile/orders'
 						className={({ isActive }) =>
 							`${styles.navLink} ${isActive ? styles.active : ''}`
 						}>
-						<span className='text text_type_main-medium text_color_inactive'>
+						<span className={COMPONENT_CLASSES.NAVIGATION.LINK_INACTIVE}>
 							История заказов
 						</span>
 					</NavLink>
 					<button
 						className={`${styles.navLink} ${styles.logoutButton}`}
 						onClick={handleLogout}>
-						<span className='text text_type_main-medium text_color_inactive'>
+						<span className={COMPONENT_CLASSES.NAVIGATION.LINK_INACTIVE}>
 							Выход
 						</span>
 					</button>
 				</nav>
-				<p className={`${styles.description} text text_type_main-default text_color_inactive`}>
+				<p
+					className={`${styles.description} ${COMPONENT_CLASSES.NAVIGATION.DESCRIPTION}`}>
 					В этом разделе вы можете изменить свои персональные данные
 				</p>
 			</div>
@@ -173,7 +159,7 @@ export const ProfilePage = () => {
 			<div className={styles.content}>
 				<form className={styles.form} onSubmit={handleSubmit}>
 					{error && (
-						<div className={`${styles.error} text text_type_main-default mb-4`}>
+						<div className={`${styles.error} ${COMPONENT_CLASSES.STATUS.ERROR} mb-4`}>
 							{error}
 						</div>
 					)}
@@ -182,8 +168,8 @@ export const ProfilePage = () => {
 						<Input
 							type='text'
 							placeholder='Имя'
-							onChange={handleInputChange}
-							value={formData.name}
+							onChange={handleChange}
+							value={values.name}
 							name='name'
 							error={false}
 							errorText=''
@@ -192,16 +178,16 @@ export const ProfilePage = () => {
 							icon='EditIcon'
 						/>
 						<EmailInput
-							onChange={handleInputChange}
-							value={formData.email}
+							onChange={handleChange}
+							value={values.email}
 							name='email'
 							placeholder='Логин'
 							isIcon={true}
 							extraClass='mb-6'
 						/>
 						<PasswordInput
-							onChange={handleInputChange}
-							value={formData.password}
+							onChange={handleChange}
+							value={values.password}
 							name='password'
 							placeholder='Пароль'
 							icon='EditIcon'

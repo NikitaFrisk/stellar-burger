@@ -1,16 +1,17 @@
-import { useState, FormEvent, useEffect } from 'react';
+import { FormEvent, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../services/store';
+import { useAppDispatch } from '../../services/store';
 import {
 	EmailInput,
 	PasswordInput,
-	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { login, clearError, selectAuthLoading, selectAuthError, selectIsAuthenticated } from '../../services/auth/authSlice';
-import styles from './login.module.scss';
+import { login, clearError } from '../../services/auth/authSlice';
+import { useForm, useAuth } from '../../hooks';
+import { AuthForm } from '../../components/auth-form';
+import { COMPONENT_CLASSES } from '../../utils/ui-classes';
 
 export const LoginPage = () => {
-	const [formData, setFormData] = useState({
+	const { values, handleChange } = useForm({
 		email: '',
 		password: '',
 	});
@@ -18,9 +19,7 @@ export const LoginPage = () => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const loading = useAppSelector(selectAuthLoading);
-	const error = useAppSelector(selectAuthError);
-	const isAuthenticated = useAppSelector(selectIsAuthenticated);
+	const { error, isAuthenticated } = useAuth();
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -37,75 +36,55 @@ export const LoginPage = () => {
 		};
 	}, [dispatch]);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-		// Не очищаем ошибку сразу - пользователь должен её увидеть
-	};
-
-	const handleSubmit = (e: FormEvent) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		// Очищаем предыдущую ошибку при новой попытке
 		if (error) {
 			dispatch(clearError());
 		}
-		dispatch(login(formData));
+		dispatch(login(values));
 	};
 
+	const isFormValid = Boolean(values.email && values.password);
+
+	const links = (
+		<>
+			<p className={COMPONENT_CLASSES.AUTH_FORM.LINK_TEXT}>
+				Вы — новый пользователь?{' '}
+				<Link to='/register' style={{ color: '#4c4cff', textDecoration: 'none' }}>
+					Зарегистрироваться
+				</Link>
+			</p>
+			<p className={COMPONENT_CLASSES.AUTH_FORM.LINK_TEXT}>
+				Забыли пароль?{' '}
+				<Link to='/forgot-password' style={{ color: '#4c4cff', textDecoration: 'none' }}>
+					Восстановить пароль
+				</Link>
+			</p>
+		</>
+	);
+
 	return (
-		<div className={styles.container}>
-			<form className={styles.form} onSubmit={handleSubmit}>
-				<h1 className='text text_type_main-medium'>Вход</h1>
-
-				{error && (
-					<div className={`${styles.error} text text_type_main-default`}>
-						{error}
-					</div>
-				)}
-
-				<div className={styles.inputGroup}>
-					<EmailInput
-						onChange={handleInputChange}
-						value={formData.email}
-						name='email'
-						placeholder='E-mail'
-						isIcon={false}
-					/>
-					<PasswordInput
-						onChange={handleInputChange}
-						value={formData.password}
-						name='password'
-						placeholder='Пароль'
-					/>
-				</div>
-
-				<Button
-					htmlType='submit'
-					type='primary'
-					size='medium'
-					extraClass={styles.button}
-					disabled={loading || !formData.email || !formData.password}>
-					{loading ? 'Входим...' : 'Войти'}
-				</Button>
-
-				<div className={styles.links}>
-					<p className='text text_type_main-default text_color_inactive'>
-						Вы — новый пользователь?{' '}
-						<Link to='/register' className={styles.link}>
-							Зарегистрироваться
-						</Link>
-					</p>
-					<p className='text text_type_main-default text_color_inactive'>
-						Забыли пароль?{' '}
-						<Link to='/forgot-password' className={styles.link}>
-							Восстановить пароль
-						</Link>
-					</p>
-				</div>
-			</form>
-		</div>
+		<AuthForm
+			title='Вход'
+			onSubmit={handleSubmit}
+			buttonText='Войти'
+			loadingText='Входим...'
+			isValid={isFormValid}
+			links={links}>
+			<EmailInput
+				onChange={handleChange}
+				value={values.email}
+				name='email'
+				placeholder='E-mail'
+				isIcon={false}
+			/>
+			<PasswordInput
+				onChange={handleChange}
+				value={values.password}
+				name='password'
+				placeholder='Пароль'
+			/>
+		</AuthForm>
 	);
 };
