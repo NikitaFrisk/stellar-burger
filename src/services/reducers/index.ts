@@ -6,6 +6,7 @@ import { orderReducer } from '../order/orderSlice';
 import { authReducer } from '../auth/authSlice';
 import feedReducer from '../feed/feedSlice';
 import orderHistoryReducer from '../order-history/orderHistorySlice';
+import orderDetailsReducer from '../order-details/orderDetailsSlice';
 
 export const rootReducer = combineReducers({
 	ingredients: ingredientsReducer,
@@ -15,6 +16,7 @@ export const rootReducer = combineReducers({
 	auth: authReducer,
 	feed: feedReducer,
 	orderHistory: orderHistoryReducer,
+	orderDetails: orderDetailsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

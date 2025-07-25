@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { IFeedOrder, IFeedMessage } from '../../utils/types';
 import { RootState } from '../store';
 
@@ -57,9 +57,28 @@ const orderHistorySlice = createSlice({
     messageReceived: (state, action: PayloadAction<IFeedMessage>) => {
       const { success, orders } = action.payload;
       
-      if (success) {
+      if (success && orders && Array.isArray(orders)) {
+        // Валидируем и фильтруем заказы
+        const validOrders = orders.filter((order: IFeedOrder) => {
+          // Проверяем обязательные поля заказа
+          return (
+            order &&
+            typeof order._id === 'string' &&
+            typeof order.number === 'number' &&
+            typeof order.name === 'string' &&
+            typeof order.status === 'string' &&
+            ['done', 'pending', 'created'].includes(order.status) &&
+            Array.isArray(order.ingredients) &&
+            typeof order.createdAt === 'string' &&
+            typeof order.updatedAt === 'string' &&
+            order.ingredients.every(id => typeof id === 'string')
+          );
+        });
+
+        console.log(`[OrderHistory] Received ${orders.length} orders, ${validOrders.length} valid`);
+        
         // Сортируем заказы по дате создания (новые сверху)
-        state.orders = orders.sort((a, b) => 
+        state.orders = validOrders.sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         state.error = null;
@@ -111,16 +130,15 @@ export const selectOrderHistoryOrderByNumber = (state: RootState, orderNumber: n
   return state.orderHistory.orders.find((order: IFeedOrder) => order.number === orderNumber);
 };
 
-// Селектор для заказов по статусу
-export const selectOrderHistoryOrdersByStatus = (state: RootState) => {
-  const orders = state.orderHistory.orders;
-  
-  return {
+// Селектор для заказов по статусу (мемоизированный)
+export const selectOrderHistoryOrdersByStatus = createSelector(
+  [selectOrderHistoryOrders],
+  (orders) => ({
     done: orders.filter((order: IFeedOrder) => order.status === 'done'),
     pending: orders.filter((order: IFeedOrder) => order.status === 'pending'),
     created: orders.filter((order: IFeedOrder) => order.status === 'created'),
-  };
-};
+  })
+);
 
 // Экспорт reducer
 export default orderHistorySlice.reducer;

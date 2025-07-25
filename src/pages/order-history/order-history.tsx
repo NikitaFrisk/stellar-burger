@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { OrderCard } from '../../components/order-card/order-card';
 import { Loader } from '../../components/loader/loader';
@@ -9,6 +9,7 @@ import {
   selectOrderHistoryOrders,
   selectOrderHistoryLoading,
   selectOrderHistoryError,
+  selectOrderHistoryConnected,
 } from '../../services/order-history/orderHistorySlice';
 import { selectIngredients } from '../../services/ingredients/ingredientsSlice';
 import { selectUser } from '../../services/auth/authSlice';
@@ -22,10 +23,14 @@ export const OrderHistoryPage: React.FC = () => {
   // State для управления показом ошибки с задержкой
   const [showError, setShowError] = useState(false);
   const [connectionStartTime, setConnectionStartTime] = useState<number | null>(null);
+  
+  // Ref для отслеживания того, что соединение уже инициировано
+  const connectionInitiated = useRef(false);
 
   const orders = useAppSelector(selectOrderHistoryOrders);
   const loading = useAppSelector(selectOrderHistoryLoading);
   const error = useAppSelector(selectOrderHistoryError);
+  const connected = useAppSelector(selectOrderHistoryConnected);
   const ingredients = useAppSelector(selectIngredients);
   const user = useAppSelector(selectUser);
 
@@ -58,17 +63,21 @@ export const OrderHistoryPage: React.FC = () => {
   }, [error, connectionStartTime]);
 
   useEffect(() => {
-    // Записываем время начала подключения
+    // Записываем время начала подключения и сбрасываем флаг инициации при монтировании
     setConnectionStartTime(Date.now());
     setShowError(false);
+    connectionInitiated.current = false;
     
     // Подключаемся к WebSocket для истории заказов пользователя
     const accessToken = localStorage.getItem('accessToken');
     
-    if (accessToken) {
+    if (accessToken && user && !connectionInitiated.current) {
+      connectionInitiated.current = true;
+      
       // Удаляем "Bearer " из токена для WebSocket
       const token = accessToken.replace('Bearer ', '');
       
+      console.log('[OrderHistory] Connecting to WebSocket...');
       dispatch(connectToOrderHistory({ 
         url: 'wss://norma.nomoreparties.space/orders',
         token: token
@@ -77,9 +86,11 @@ export const OrderHistoryPage: React.FC = () => {
 
     // Отключаемся при размонтировании
     return () => {
+      console.log('[OrderHistory] Disconnecting from WebSocket...');
       dispatch(disconnectFromOrderHistory());
+      connectionInitiated.current = false;
     };
-  }, [dispatch, user]);
+  }, [dispatch, user]); // Убираем connected и loading из зависимостей
 
   const handleOrderClick = (orderNumber: number) => {
     navigate(`/profile/orders/${orderNumber}`, {
@@ -99,9 +110,12 @@ export const OrderHistoryPage: React.FC = () => {
         <button onClick={() => {
           setConnectionStartTime(Date.now());
           setShowError(false);
+          connectionInitiated.current = false;
+          
           const accessToken = localStorage.getItem('accessToken');
           
-          if (accessToken) {
+          if (accessToken && !connectionInitiated.current) {
+            connectionInitiated.current = true;
             const token = accessToken.replace('Bearer ', '');
             
             dispatch(connectToOrderHistory({ 

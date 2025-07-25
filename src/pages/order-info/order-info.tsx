@@ -18,6 +18,13 @@ import {
   selectOrderHistoryLoading,
   selectOrderHistoryError
 } from '../../services/order-history/orderHistorySlice';
+import {
+  fetchOrderByNumber,
+  selectOrderDetailsOrder,
+  selectOrderDetailsLoading,
+  selectOrderDetailsError,
+  clearOrderDetails
+} from '../../services/order-details/orderDetailsSlice';
 import { selectIngredients } from '../../services/ingredients/ingredientsSlice';
 import { selectUser } from '../../services/auth/authSlice';
 import { IIngredient, IFeedOrder } from '../../utils/types';
@@ -45,7 +52,7 @@ export const OrderInfoPage: React.FC<OrderInfoPageProps> = ({ hideOrderNumber = 
 
   const ingredients = useAppSelector(selectIngredients);
   const user = useAppSelector(selectUser);
-  
+
   // Определяем, является ли это заказом из профиля
   const isProfileOrder = location.pathname.includes('/profile/orders');
   
@@ -59,20 +66,29 @@ export const OrderInfoPage: React.FC<OrderInfoPageProps> = ({ hideOrderNumber = 
     selectOrderHistoryOrderByNumber(state, orderNumber)
   );
 
+  // Заказ из прямого API-запроса
+  const apiOrder = useAppSelector(selectOrderDetailsOrder);
+
   // Состояния загрузки
   const feedLoading = useAppSelector(selectFeedLoading);
   const feedError = useAppSelector(selectFeedError);
   const orderHistoryLoading = useAppSelector(selectOrderHistoryLoading);
   const orderHistoryError = useAppSelector(selectOrderHistoryError);
+  const apiLoading = useAppSelector(selectOrderDetailsLoading);
+  const apiError = useAppSelector(selectOrderDetailsError);
 
-  // Выбираем актуальный заказ
-  const order: IFeedOrder | undefined = isProfileOrder ? userOrder : feedOrder;
+  // Выбираем актуальный заказ - сначала из WebSocket, потом из API
+  const order: IFeedOrder | undefined | null = isProfileOrder ? 
+    (userOrder || apiOrder) : 
+    (feedOrder || apiOrder);
   
   // Определяем состояние загрузки и ошибки
-  const isLoading = isProfileOrder ? orderHistoryLoading : feedLoading;
-  const error = isProfileOrder ? orderHistoryError : feedError;
-
-  // Управляем показом ошибки с задержкой
+  const isLoading = isProfileOrder ? 
+    (orderHistoryLoading || apiLoading) : 
+    (feedLoading || apiLoading);
+  const error = isProfileOrder ? 
+    (orderHistoryError || apiError) : 
+    (feedError || apiError);  // Управляем показом ошибки с задержкой
   useEffect(() => {
     let errorTimer: NodeJS.Timeout;
 
@@ -106,11 +122,15 @@ export const OrderInfoPage: React.FC<OrderInfoPageProps> = ({ hideOrderNumber = 
     setConnectionStartTime(Date.now());
     setShowError(false);
 
+    // Очищаем предыдущие данные API
+    dispatch(clearOrderDetails());
+
     if (isProfileOrder) {
       // Для заказов профиля подключаемся к истории заказов
       const accessToken = localStorage.getItem('accessToken');
       if (accessToken && user) {
         const token = accessToken.replace('Bearer ', '');
+        console.log('[OrderInfo] Connecting to order history WebSocket...');
         dispatch(connectToOrderHistory({ 
           url: 'wss://norma.nomoreparties.space/orders',
           token: token
@@ -118,6 +138,7 @@ export const OrderInfoPage: React.FC<OrderInfoPageProps> = ({ hideOrderNumber = 
       }
     } else {
       // Для заказов ленты подключаемся к общей ленте
+      console.log('[OrderInfo] Connecting to feed WebSocket...');
       dispatch(connectToFeed({ 
         url: 'wss://norma.nomoreparties.space/orders/all' 
       }));
@@ -125,13 +146,31 @@ export const OrderInfoPage: React.FC<OrderInfoPageProps> = ({ hideOrderNumber = 
 
     // Отключаемся при размонтировании компонента
     return () => {
+      console.log('[OrderInfo] Disconnecting from WebSocket...');
       if (isProfileOrder) {
         dispatch(disconnectFromOrderHistory());
       } else {
         dispatch(disconnectFromFeed());
       }
+      dispatch(clearOrderDetails());
     };
-  }, [dispatch, isProfileOrder, user]);
+  }, [dispatch, isProfileOrder, user, orderNumber]); // Добавляем orderNumber чтобы переподключаться при смене заказа
+
+  // Эффект для прямого API-запроса, если заказ не найден в WebSocket данных
+  useEffect(() => {
+    // Ждем 3 секунды после подключения к WebSocket
+    const timer = setTimeout(() => {
+      const wsOrder = isProfileOrder ? userOrder : feedOrder;
+      
+      // Если заказ не найден в WebSocket данных и нет активной загрузки API
+      if (!wsOrder && !apiOrder && !apiLoading && connectionStartTime) {
+        console.log(`[OrderInfo] Order ${orderNumber} not found in WebSocket data, making direct API request`);
+        dispatch(fetchOrderByNumber(orderNumber));
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [dispatch, orderNumber, userOrder, feedOrder, apiOrder, apiLoading, isProfileOrder, connectionStartTime]);
 
   // Обрабатываем ингредиенты с подсчетом количества
   const processedIngredients = useMemo(() => {

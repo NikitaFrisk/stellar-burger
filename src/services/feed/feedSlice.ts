@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { IFeedOrder, IFeedMessage, TOrderStatus } from '../../utils/types';
 import { RootState } from '../store';
 
@@ -61,10 +61,29 @@ const feedSlice = createSlice({
     messageReceived: (state, action: PayloadAction<IFeedMessage>) => {
       const { success, orders, total, totalToday } = action.payload;
       
-      if (success) {
-        state.orders = orders;
-        state.total = total;
-        state.totalToday = totalToday;
+      if (success && orders && Array.isArray(orders)) {
+        // Валидируем и фильтруем заказы
+        const validOrders = orders.filter((order: IFeedOrder) => {
+          // Проверяем обязательные поля заказа
+          return (
+            order &&
+            typeof order._id === 'string' &&
+            typeof order.number === 'number' &&
+            typeof order.name === 'string' &&
+            typeof order.status === 'string' &&
+            ['done', 'pending', 'created'].includes(order.status) &&
+            Array.isArray(order.ingredients) &&
+            typeof order.createdAt === 'string' &&
+            typeof order.updatedAt === 'string' &&
+            order.ingredients.every(id => typeof id === 'string')
+          );
+        });
+
+        console.log(`[Feed] Received ${orders.length} orders, ${validOrders.length} valid`);
+        
+        state.orders = validOrders;
+        state.total = typeof total === 'number' ? total : 0;
+        state.totalToday = typeof totalToday === 'number' ? totalToday : 0;
         state.error = null;
       } else {
         state.error = 'Ошибка получения данных';
@@ -113,16 +132,15 @@ export const selectFeedLoading = (state: RootState) => state.feed.isConnecting;
 export const selectFeedConnected = (state: RootState) => state.feed.isConnected;
 export const selectFeedError = (state: RootState) => state.feed.error;
 
-// Селектор для заказов по статусу
-export const selectFeedOrdersByStatus = (state: RootState) => {
-  const orders = state.feed.orders;
-  
-  return {
+// Селектор для заказов по статусу (мемоизированный)
+export const selectFeedOrdersByStatus = createSelector(
+  [selectFeedOrders],
+  (orders) => ({
     done: orders.filter((order: IFeedOrder) => order.status === 'done'),
     pending: orders.filter((order: IFeedOrder) => order.status === 'pending'),
     created: orders.filter((order: IFeedOrder) => order.status === 'created'),
-  };
-};
+  })
+);
 
 // Селектор для получения заказа по номеру
 export const selectFeedOrderByNumber = (state: RootState, orderNumber: number) => {

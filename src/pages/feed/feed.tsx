@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { OrderCard } from '../../components/order-card/order-card';
 import { OrderStats } from '../../components/order-stats/order-stats';
@@ -13,6 +13,7 @@ import {
   selectFeedOrdersByStatus,
   selectFeedLoading,
   selectFeedError,
+  selectFeedConnected,
 } from '../../services/feed/feedSlice';
 import { selectIngredients } from '../../services/ingredients/ingredientsSlice';
 import styles from './feed.module.scss';
@@ -25,6 +26,9 @@ export const FeedPage: React.FC = () => {
   // State для управления показом ошибки с задержкой
   const [showError, setShowError] = useState(false);
   const [connectionStartTime, setConnectionStartTime] = useState<number | null>(null);
+  
+  // Ref для отслеживания того, что соединение уже инициировано
+  const connectionInitiated = useRef(false);
 
   const orders = useAppSelector(selectFeedOrders);
   const total = useAppSelector(selectFeedTotal);
@@ -32,6 +36,7 @@ export const FeedPage: React.FC = () => {
   const ordersByStatus = useAppSelector(selectFeedOrdersByStatus);
   const loading = useAppSelector(selectFeedLoading);
   const error = useAppSelector(selectFeedError);
+  const connected = useAppSelector(selectFeedConnected);
   const ingredients = useAppSelector(selectIngredients);
 
   // Управляем показом ошибки с задержкой
@@ -63,20 +68,27 @@ export const FeedPage: React.FC = () => {
   }, [error, connectionStartTime]);
 
   useEffect(() => {
-    // Записываем время начала подключения
+    // Записываем время начала подключения и сбрасываем флаг инициации при монтировании
     setConnectionStartTime(Date.now());
     setShowError(false);
+    connectionInitiated.current = false;
     
-    // Подключаемся к WebSocket для ленты заказов
-    dispatch(connectToFeed({ 
-      url: 'wss://norma.nomoreparties.space/orders/all' 
-    }));
+    // Подключаемся к WebSocket для ленты заказов только если еще не инициировали соединение
+    if (!connectionInitiated.current) {
+      connectionInitiated.current = true;
+      console.log('[Feed] Connecting to WebSocket...');
+      dispatch(connectToFeed({ 
+        url: 'wss://norma.nomoreparties.space/orders/all' 
+      }));
+    }
 
     // Отключаемся при размонтировании
     return () => {
+      console.log('[Feed] Disconnecting from WebSocket...');
       dispatch(disconnectFromFeed());
+      connectionInitiated.current = false;
     };
-  }, [dispatch]);
+  }, [dispatch]); // Убираем connected и loading из зависимостей
 
   const handleOrderClick = (orderNumber: number) => {
     navigate(`/feed/${orderNumber}`, {
@@ -96,9 +108,14 @@ export const FeedPage: React.FC = () => {
         <button onClick={() => {
           setConnectionStartTime(Date.now());
           setShowError(false);
-          dispatch(connectToFeed({ 
-            url: 'wss://norma.nomoreparties.space/orders/all' 
-          }));
+          connectionInitiated.current = false;
+          
+          if (!connectionInitiated.current) {
+            connectionInitiated.current = true;
+            dispatch(connectToFeed({ 
+              url: 'wss://norma.nomoreparties.space/orders/all' 
+            }));
+          }
         }}>
           Попробовать снова
         </button>
