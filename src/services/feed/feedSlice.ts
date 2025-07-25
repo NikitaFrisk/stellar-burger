@@ -30,11 +30,11 @@ const feedSlice = createSlice({
   initialState,
   reducers: {
     // Подключение к WebSocket
-    connectToFeed: (state, action: PayloadAction<{ url: string }>) => {
+    connectToFeed: (state, action: PayloadAction<string>) => {
       state.isConnecting = true;
       state.isConnected = false;
       state.error = null;
-      state.connectionUrl = action.payload.url;
+      state.connectionUrl = action.payload;
     },
 
     // Успешное подключение

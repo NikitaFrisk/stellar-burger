@@ -77,11 +77,9 @@ export const OrderHistoryPage: React.FC = () => {
       // Удаляем "Bearer " из токена для WebSocket
       const token = accessToken.replace('Bearer ', '');
       
+      const fullUrl = `wss://norma.nomoreparties.space/orders?token=${token}`;
       console.log('[OrderHistory] Connecting to WebSocket...');
-      dispatch(connectToOrderHistory({ 
-        url: 'wss://norma.nomoreparties.space/orders',
-        token: token
-      }));
+      dispatch(connectToOrderHistory(fullUrl));
     }
 
     // Отключаемся при размонтировании
@@ -117,11 +115,9 @@ export const OrderHistoryPage: React.FC = () => {
           if (accessToken && !connectionInitiated.current) {
             connectionInitiated.current = true;
             const token = accessToken.replace('Bearer ', '');
+            const fullUrl = `wss://norma.nomoreparties.space/orders?token=${token}`;
             
-            dispatch(connectToOrderHistory({ 
-              url: 'wss://norma.nomoreparties.space/orders',
-              token: token
-            }));
+            dispatch(connectToOrderHistory(fullUrl));
           }
         }}>
           Попробовать снова

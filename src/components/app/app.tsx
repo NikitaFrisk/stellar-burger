@@ -35,6 +35,8 @@ import {
 } from '../../services/order/orderSlice';
 import { getUser } from '../../services/auth/authSlice';
 import { getCookie } from '../../utils/cookie';
+import { selectOrderHistoryOrderByNumber } from '../../services/order-history/orderHistorySlice';
+import { selectOrderDetailsOrder } from '../../services/order-details/orderDetailsSlice';
 import {
 	HomePage,
 	LoginPage,
@@ -73,18 +75,37 @@ const ModalFeedOrderDetails: React.FC = () => {
 // Modal order details component for profile orders
 const ModalProfileOrderDetails: React.FC = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { number } = useParams<{ number: string }>();
-	const orderNumber = number ? parseInt(number) : 0;
+	const orderNumberFromParams = number ? parseInt(number) : 0;
+	
+	// Пытаемся получить заказ для правильного отображения номера
+	const orderFromHistory = useAppSelector(state => 
+		selectOrderHistoryOrderByNumber(state, orderNumberFromParams)
+	);
+	const orderFromAPI = useAppSelector(selectOrderDetailsOrder);
+	const order = orderFromHistory || orderFromAPI;
+	const displayOrderNumber = order?.number || orderNumberFromParams;
 	
 	const handleClose = () => {
-		// Go back to the previous location
-		navigate(-1);
+		// Если есть backgroundLocation (пришли из другой страницы), возвращаемся назад
+		const backgroundLocation = (location.state as LocationState)?.backgroundLocation;
+		if (backgroundLocation) {
+			navigate(-1);
+		} else {
+			// Если прямая загрузка, идем на страницу профиля
+			navigate('/profile/orders');
+		}
 	};
 
 	return (
-		<Modal title={`#${String(orderNumber).padStart(6, '0')}`} onClose={handleClose}>
-			<OrderInfoPage hideOrderNumber={true} />
-		</Modal>
+		<ProtectedRoute 
+			element={
+				<Modal title={`#${String(displayOrderNumber).padStart(6, '0')}`} onClose={handleClose}>
+					<OrderInfoPage hideOrderNumber={true} />
+				</Modal>
+			} 
+		/>
 	);
 };
 
@@ -217,6 +238,11 @@ const AppContent: React.FC = () => {
 					<Route path='/feed/:number' element={<ModalFeedOrderDetails />} />
 					<Route path='/profile/orders/:number' element={<ModalProfileOrderDetails />} />
 				</Routes>
+			)}
+
+			{/* Модальные окна профиля заказов при прямой загрузке (без backgroundLocation) */}
+			{!backgroundLocation && location.pathname.startsWith('/profile/orders/') && location.pathname !== '/profile/orders' && (
+				<ModalProfileOrderDetails />
 			)}
 
 			{(order || orderLoading) && (

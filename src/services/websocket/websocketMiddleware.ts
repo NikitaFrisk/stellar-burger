@@ -1,95 +1,8 @@
 import { Middleware, Action } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-// WebSocket action types
-export const WS_CONNECTION_START = 'WS_CONNECTION_START';
-export const WS_CONNECTION_SUCCESS = 'WS_CONNECTION_SUCCESS';
-export const WS_CONNECTION_ERROR = 'WS_CONNECTION_ERROR';
-export const WS_CONNECTION_CLOSED = 'WS_CONNECTION_CLOSED';
-export const WS_GET_MESSAGE = 'WS_GET_MESSAGE';
-export const WS_SEND_MESSAGE = 'WS_SEND_MESSAGE';
-export const WS_CONNECTION_CLOSE = 'WS_CONNECTION_CLOSE';
-
-// WebSocket action interfaces
-export interface WSConnectionStartAction {
-  type: typeof WS_CONNECTION_START;
-  payload: {
-    url: string;
-    token?: string;
-  };
-}
-
-export interface WSConnectionSuccessAction {
-  type: typeof WS_CONNECTION_SUCCESS;
-}
-
-export interface WSConnectionErrorAction {
-  type: typeof WS_CONNECTION_ERROR;
-  payload: string;
-}
-
-export interface WSConnectionClosedAction {
-  type: typeof WS_CONNECTION_CLOSED;
-}
-
-export interface WSGetMessageAction {
-  type: typeof WS_GET_MESSAGE;
-  payload: any;
-}
-
-export interface WSSendMessageAction {
-  type: typeof WS_SEND_MESSAGE;
-  payload: any;
-}
-
-export interface WSConnectionCloseAction {
-  type: typeof WS_CONNECTION_CLOSE;
-}
-
-export type WSAction = 
-  | WSConnectionStartAction
-  | WSConnectionSuccessAction
-  | WSConnectionErrorAction
-  | WSConnectionClosedAction
-  | WSGetMessageAction
-  | WSSendMessageAction
-  | WSConnectionCloseAction;
-
-// Action creators
-export const wsConnectionStart = (url: string, token?: string): WSConnectionStartAction => ({
-  type: WS_CONNECTION_START,
-  payload: { url, token }
-});
-
-export const wsConnectionSuccess = (): WSConnectionSuccessAction => ({
-  type: WS_CONNECTION_SUCCESS
-});
-
-export const wsConnectionError = (error: string): WSConnectionErrorAction => ({
-  type: WS_CONNECTION_ERROR,
-  payload: error
-});
-
-export const wsConnectionClosed = (): WSConnectionClosedAction => ({
-  type: WS_CONNECTION_CLOSED
-});
-
-export const wsGetMessage = (message: any): WSGetMessageAction => ({
-  type: WS_GET_MESSAGE,
-  payload: message
-});
-
-export const wsSendMessage = (message: any): WSSendMessageAction => ({
-  type: WS_SEND_MESSAGE,
-  payload: message
-});
-
-export const wsConnectionClose = (): WSConnectionCloseAction => ({
-  type: WS_CONNECTION_CLOSE
-});
-
-// WebSocket middleware configuration
-export interface WebSocketMiddlewareConfig {
+// Интерфейс для конфигурации WebSocket actions
+export interface WebSocketActionTypes {
   connectionStart: string;
   connectionSuccess: string;
   connectionError: string;
@@ -99,15 +12,13 @@ export interface WebSocketMiddlewareConfig {
   connectionClose: string;
 }
 
-// WebSocket middleware factory
-export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Middleware => {
+// Универсальный WebSocket middleware
+export const createWebSocketMiddleware = (actionTypes: WebSocketActionTypes): Middleware => {
   let socket: WebSocket | null = null;
   let reconnectTimer: NodeJS.Timeout | null = null;
-  let url: string = '';
-  let token: string | undefined = undefined;
   let isClosingConnection = false;
   let connectionAttempts = 0;
-  let maxConnectionAttempts = 5;
+  const maxConnectionAttempts = 5;
 
   const clearReconnectTimer = () => {
     if (reconnectTimer) {
@@ -119,50 +30,47 @@ export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Mi
   return (store) => (next) => (action: any) => {
     const { dispatch } = store;
 
-    const reconnect = () => {
+    const reconnect = (url: string) => {
       clearReconnectTimer();
       
       if (connectionAttempts >= maxConnectionAttempts) {
         console.error('[WebSocket] Max reconnection attempts reached');
-        dispatch({ type: config.connectionError, payload: 'Max reconnection attempts reached' });
+        dispatch({ type: actionTypes.connectionError, payload: 'Max reconnection attempts reached' });
         return;
       }
 
-      const delay = Math.min(1000 * Math.pow(2, connectionAttempts), 30000); // Exponential backoff, max 30s
+      const delay = Math.min(1000 * Math.pow(2, connectionAttempts), 30000);
       console.log(`[WebSocket] Attempting to reconnect in ${delay}ms (attempt ${connectionAttempts + 1}/${maxConnectionAttempts})`);
       
       reconnectTimer = setTimeout(() => {
         connectionAttempts++;
-        dispatch({ type: config.connectionStart, payload: { url, token } });
+        dispatch({ type: actionTypes.connectionStart, payload: url });
       }, delay);
     };
 
-    const createConnection = (wsUrl: string) => {
+    const createConnection = (url: string) => {
       if (isClosingConnection) {
-        // Если идет процесс закрытия, отложим создание нового соединения
-        setTimeout(() => createConnection(wsUrl), 200);
+        setTimeout(() => createConnection(url), 200);
         return;
       }
 
-      // Проверяем, не создаем ли мы уже соединение
       if (socket && socket.readyState === WebSocket.CONNECTING) {
         console.log('[WebSocket] Connection already in progress, skipping');
         return;
       }
 
       try {
-        console.log('[WebSocket] Creating new connection to:', wsUrl);
-        socket = new WebSocket(wsUrl);
+        console.log('[WebSocket] Creating new connection to:', url);
+        socket = new WebSocket(url);
 
         socket.onopen = () => {
           console.log('[WebSocket] Connection opened successfully');
-          connectionAttempts = 0; // Сбрасываем счетчик при успешном подключении
-          dispatch({ type: config.connectionSuccess });
+          connectionAttempts = 0;
+          dispatch({ type: actionTypes.connectionSuccess });
         };
 
         socket.onerror = (event) => {
           console.error('[WebSocket] Connection error:', event);
-          // Не диспатчим ошибку сразу, дождемся onclose
         };
 
         socket.onmessage = (event) => {
@@ -170,11 +78,9 @@ export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Mi
             const data = JSON.parse(event.data);
             console.log('[WebSocket] Message received:', data);
             
-            // Проверяем на ошибку "Invalid or missing token"
             if (!data.success && data.message === 'Invalid or missing token') {
               console.error('[WebSocket] Invalid or missing token error');
-              dispatch({ type: config.connectionError, payload: 'Invalid or missing token' });
-              // Закрываем соединение при ошибке токена
+              dispatch({ type: actionTypes.connectionError, payload: 'Invalid or missing token' });
               if (socket) {
                 isClosingConnection = true;
                 socket.close(1000, 'Invalid token');
@@ -183,71 +89,67 @@ export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Mi
               return;
             }
             
-            dispatch({ type: config.getMessage, payload: data });
+            dispatch({ type: actionTypes.getMessage, payload: data });
           } catch (error) {
             console.error('[WebSocket] Error parsing message:', error);
-            dispatch({ type: config.connectionError, payload: 'Error parsing WebSocket message' });
+            dispatch({ type: actionTypes.connectionError, payload: 'Error parsing WebSocket message' });
           }
         };
 
         socket.onclose = (event) => {
           console.log('[WebSocket] Connection closed:', event.code, event.reason);
           isClosingConnection = false;
-          dispatch({ type: config.connectionClosed });
+          dispatch({ type: actionTypes.connectionClosed });
           
-          // Реконнектимся только если закрытие было неожиданным и мы не достигли лимита попыток
           if (event.code !== 1000 && connectionAttempts < maxConnectionAttempts) {
-            reconnect();
+            reconnect(url);
           } else if (event.code !== 1000) {
-            dispatch({ type: config.connectionError, payload: 'WebSocket connection failed' });
+            dispatch({ type: actionTypes.connectionError, payload: 'WebSocket connection failed' });
           }
         };
       } catch (error) {
         console.error('[WebSocket] Error creating connection:', error);
-        dispatch({ type: config.connectionError, payload: 'Failed to create WebSocket connection' });
+        dispatch({ type: actionTypes.connectionError, payload: 'Failed to create WebSocket connection' });
       }
     };
 
     // Handle connection start
-    if (action.type === config.connectionStart) {
+    if (action.type === actionTypes.connectionStart) {
       clearReconnectTimer();
       
-      // Если уже есть открытое соединение к тому же URL, не создаем новое
-      const newUrl = action.payload?.url || '';
-      const newToken = action.payload?.token;
-      const newWsUrl = newToken ? `${newUrl}?token=${newToken}` : newUrl;
+      const url = action.payload;
       
-      if (socket && socket.readyState === WebSocket.OPEN && url === newUrl && token === newToken) {
+      if (!url || typeof url !== 'string') {
+        console.error('[WebSocket] No valid URL provided for connection');
+        dispatch({ type: actionTypes.connectionError, payload: 'No valid URL provided' });
+        return next(action);
+      }
+      
+      if (socket && socket.readyState === WebSocket.OPEN && socket.url === url) {
         console.log('[WebSocket] Connection already open to the same URL, skipping');
         return next(action);
       }
       
-      // Закрываем существующее соединение если есть
       if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
         console.log('[WebSocket] Closing existing connection before creating new one');
         isClosingConnection = true;
         socket.close(1000, 'New connection requested');
         socket = null;
         
-        // Увеличиваем задержку для медленных серверов
         setTimeout(() => {
-          url = newUrl;
-          token = newToken;
           isClosingConnection = false;
-          createConnection(newWsUrl);
-        }, 300); // Увеличили с 50ms до 300ms
+          createConnection(url);
+        }, 300);
       } else {
-        url = newUrl;
-        token = newToken;
-        connectionAttempts = 0; // Сбрасываем счетчик при новом подключении
-        createConnection(newWsUrl);
+        connectionAttempts = 0;
+        createConnection(url);
       }
     }
 
     // Handle connection close
-    if (action.type === config.connectionClose) {
+    if (action.type === actionTypes.connectionClose) {
       clearReconnectTimer();
-      connectionAttempts = 0; // Сбрасываем счетчик при ручном закрытии
+      connectionAttempts = 0;
       if (socket && (socket.readyState === WebSocket.CONNECTING || socket.readyState === WebSocket.OPEN)) {
         isClosingConnection = true;
         socket.close(1000, 'Manual close');
@@ -256,14 +158,14 @@ export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Mi
     }
 
     // Handle send message
-    if (action.type === config.sendMessage && socket && socket.readyState === WebSocket.OPEN) {
+    if (action.type === actionTypes.sendMessage && socket && socket.readyState === WebSocket.OPEN) {
       try {
         const message = JSON.stringify(action.payload);
         socket.send(message);
         console.log('[WebSocket] Message sent:', message);
       } catch (error) {
         console.error('[WebSocket] Error sending message:', error);
-        dispatch({ type: config.connectionError, payload: 'Error sending WebSocket message' });
+        dispatch({ type: actionTypes.connectionError, payload: 'Error sending WebSocket message' });
       }
     }
 
@@ -271,7 +173,7 @@ export const createWebSocketMiddleware = (config: WebSocketMiddlewareConfig): Mi
   };
 };
 
-// Default middleware instance for feed
+// Экземпляры middleware для разных типов WebSocket соединений
 export const feedWebSocketMiddleware = createWebSocketMiddleware({
   connectionStart: 'feed/connectToFeed',
   connectionSuccess: 'feed/connectionSuccess',
@@ -282,7 +184,6 @@ export const feedWebSocketMiddleware = createWebSocketMiddleware({
   connectionClose: 'feed/disconnectFromFeed'
 });
 
-// Default middleware instance for order history
 export const orderHistoryWebSocketMiddleware = createWebSocketMiddleware({
   connectionStart: 'orderHistory/connectToOrderHistory',
   connectionSuccess: 'orderHistory/connectionSuccess',

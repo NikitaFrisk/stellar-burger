@@ -77,9 +77,7 @@ export const FeedPage: React.FC = () => {
     if (!connectionInitiated.current) {
       connectionInitiated.current = true;
       console.log('[Feed] Connecting to WebSocket...');
-      dispatch(connectToFeed({ 
-        url: 'wss://norma.nomoreparties.space/orders/all' 
-      }));
+      dispatch(connectToFeed('wss://norma.nomoreparties.space/orders/all'));
     }
 
     // Отключаемся при размонтировании
@@ -112,9 +110,7 @@ export const FeedPage: React.FC = () => {
           
           if (!connectionInitiated.current) {
             connectionInitiated.current = true;
-            dispatch(connectToFeed({ 
-              url: 'wss://norma.nomoreparties.space/orders/all' 
-            }));
+            dispatch(connectToFeed('wss://norma.nomoreparties.space/orders/all'));
           }
         }}>
           Попробовать снова
