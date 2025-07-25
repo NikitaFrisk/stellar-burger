@@ -9,3 +9,8 @@ export const ResetPasswordPage = lazy(() => import('./reset-password/reset-passw
 export const ProfilePage = lazy(() => import('./profile/profile').then(module => ({ default: module.ProfilePage })));
 export const IngredientPage = lazy(() => import('./ingredient/ingredient').then(module => ({ default: module.IngredientPage })));
 export const NotFoundPage = lazy(() => import('./not-found/not-found').then(module => ({ default: module.NotFoundPage })));
+
+// Новые страницы WebSocket
+export const FeedPage = lazy(() => import('./feed/feed').then(module => ({ default: module.FeedPage })));
+export const OrderHistoryPage = lazy(() => import('./order-history/order-history').then(module => ({ default: module.OrderHistoryPage })));
+export const OrderInfoPage = lazy(() => import('./order-info/order-info').then(module => ({ default: module.OrderInfoPage })));

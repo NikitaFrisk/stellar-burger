@@ -1,0 +1,132 @@
+.feedPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+  min-height: calc(100vh - 88px);
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.title {
+  font-family: 'JetBrains Mono', monospace;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 50px;
+  color: #F2F2F3;
+  margin: 0;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 60px;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.ordersSection {
+  flex: 1;
+  max-width: 600px;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 864px;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  /* Кастомный скроллбар */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #2F2F37;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #8585AD;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #565680;
+  }
+}
+
+.statsSection {
+  flex: 0 0 580px;
+  position: sticky;
+  top: 40px;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #F2F2F3;
+
+  h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #E52B1A;
+  }
+
+  p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    opacity: 0.8;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1280px) {
+  .content {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    max-width: 600px;
+  }
+
+  .statsSection {
+    position: static;
+    flex: none;
+    width: 100%;
+    max-width: 580px;
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 0 16px;
+  }
+
+  .ordersSection {
+    max-width: 100%;
+  }
+
+  .ordersList {
+    height: 600px;
+  }
+
+  .title {
+    font-size: 32px;
+    line-height: 40px;
+  }
+}

@@ -1,4 +1,4 @@
-import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ENDPOINTS, request } from '../../utils/api-constants';
 import { IIngredient } from '@utils/types';
 import { AppDispatch, RootState } from '../store';
@@ -46,19 +46,10 @@ const getItems = (state: RootState): IIngredient[] => state.ingredients?.items |
 const getLoading = (state: RootState): boolean => state.ingredients?.loading || false;
 const getError = (state: RootState): string | null => state.ingredients?.error || null;
 
-export const selectIngredients = createSelector([getItems], (items) => [
-	...items,
-]);
-
-export const selectIngredientsLoading = createSelector(
-	[getLoading],
-	(loading) => Boolean(loading)
-);
-
-export const selectIngredientsError = createSelector(
-	[getError],
-	(error) => error
-);
+// Селекторы без ненужных трансформаций
+export const selectIngredients = (state: RootState) => getItems(state);
+export const selectIngredientsLoading = (state: RootState) => getLoading(state);
+export const selectIngredientsError = (state: RootState) => getError(state);
 
 export const fetchIngredients = () => {
 	return async (dispatch: AppDispatch) => {

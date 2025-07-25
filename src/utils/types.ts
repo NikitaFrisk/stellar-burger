@@ -33,6 +33,35 @@ export interface IOrder {
 	ingredients?: string[];
 }
 
+// Интерфейс для заказа из WebSocket (Feed Order)
+export interface IFeedOrder {
+	_id: string;
+	ingredients: string[];
+	status: 'done' | 'pending' | 'created';
+	name: string;
+	createdAt: string;
+	updatedAt: string;
+	number: number;
+}
+
+// Интерфейс для WebSocket сообщения ленты заказов
+export interface IFeedMessage {
+	success: boolean;
+	orders: IFeedOrder[];
+	total: number;
+	totalToday: number;
+}
+
+// Статусы заказов
+export type TOrderStatus = 'done' | 'pending' | 'created';
+
+// Интерфейс для статистики заказов
+export interface IOrderStats {
+	total: number;
+	totalToday: number;
+	orders: IFeedOrder[];
+}
+
 // Интерфейс для пользователя
 export interface IUser {
 	email: string;

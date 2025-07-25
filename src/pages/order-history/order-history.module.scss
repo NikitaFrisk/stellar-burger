@@ -1,0 +1,93 @@
+.orderHistoryPage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 400px;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 864px;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  /* Кастомный скроллбар */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #2F2F37;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #8585AD;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #565680;
+  }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #F2F2F3;
+
+  h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #E52B1A;
+  }
+
+  p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    opacity: 0.8;
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #F2F2F3;
+
+  h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #8585AD;
+  }
+
+  p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    opacity: 0.8;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ordersList {
+    max-height: 600px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ordersList {
+    max-height: 500px;
+  }
+}
