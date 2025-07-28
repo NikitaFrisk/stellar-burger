@@ -7,7 +7,7 @@ interface IIngredientDetailsProps {
 
 export const IngredientDetails: React.FC<IIngredientDetailsProps> = ({ ingredient }) => {
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} data-testid="ingredient-details">
 			<img
 				src={ingredient.image_large}
 				alt={ingredient.name}

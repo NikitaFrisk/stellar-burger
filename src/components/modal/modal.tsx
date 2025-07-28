@@ -35,13 +35,13 @@ export const Modal: React.FC<IModalProps> = ({ children, title, onClose, closabl
 	return createPortal(
 		<>
 			<ModalOverlay onClick={closable ? onClose : () => {}} />
-			<div className={styles.modal}>
+			<div className={styles.modal} data-testid="modal">
 				<div className={styles.header}>
 					<h2 className={`${styles.title} text text_type_main-large`}>
 						{title}
 					</h2>
 					{closable && (
-						<button className={styles.closeButton} onClick={onClose}>
+						<button className={styles.closeButton} onClick={onClose} data-testid="modal-close">
 							<CloseIcon type='primary' />
 						</button>
 					)}

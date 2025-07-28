@@ -23,11 +23,14 @@ module.exports = {
 				use: [
 					{
 						loader: 'ts-loader',
+						options: {
+							configFile: production ? 'tsconfig.build.json' : 'tsconfig.json'
+						}
 					},
 				], 
 				
 				
-				exclude: /node_modules/,
+				exclude: [/node_modules/, /\.test\.[tj]sx?$/, /\.spec\.[tj]sx?$/],
 			},
 			{
 				test: /\.(png|jpg|gif|webp)$/,
