@@ -172,14 +172,9 @@ const getIngredientsList = (state: RootState): IConstructorIngredient[] => {
 		: [];
 };
 
-export const selectBun = createSelector([getBun], (bun) =>
-	bun ? { ...bun } : null
-);
+export const selectBun = (state: RootState) => getBun(state);
 
-export const selectIngredients = createSelector(
-	[getIngredientsList],
-	(ingredients) => ingredients.slice()
-);
+export const selectIngredients = (state: RootState) => getIngredientsList(state);
 
 export const selectTotalPrice = createSelector(
 	[getBun, getIngredientsList],

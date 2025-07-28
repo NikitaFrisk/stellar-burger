@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { rootReducer } from './reducers';
+import { feedWebSocketMiddleware, orderHistoryWebSocketMiddleware } from './websocket/websocketMiddleware';
 
 const stateLogger = (store: any) => (next: any) => (action: any) => {
 	console.log('----------------------------');
@@ -53,7 +54,12 @@ export const store = configureStore({
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			serializableCheck: false,
-		}).concat(crashReporter, stateLogger),
+		}).concat(
+			crashReporter, 
+			stateLogger,
+			feedWebSocketMiddleware,
+			orderHistoryWebSocketMiddleware
+		),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
