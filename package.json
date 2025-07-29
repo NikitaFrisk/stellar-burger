@@ -39,6 +39,7 @@
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-react": "^7.32.2",
 		"eslint-plugin-react-hooks": "^4.6.0",
+		"gh-pages": "^6.2.0",
 		"html-webpack-plugin": "^5.5.1",
 		"husky": "^8.0.3",
 		"identity-obj-proxy": "^3.0.0",
@@ -77,19 +78,21 @@
 		"prepare": "husky install",
 		"commit": "npm run check && cz",
 		"test": "jest",
-		"cypress": "cypress open"
+		"cypress": "cypress open",
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d build"
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.5.1",
 		"@ya.praktikum/react-developer-burger-ui-components": "^1.14.2",
 		"clsx": "^2.1.0",
 		"core-js": "^3.38.1",
-		"react": "^18.2.0",
+		"react": "^18.3.1",
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
-		"react-dom": "^18.2.0",
+		"react-dom": "^18.3.1",
 		"react-redux": "^9.2.0",
-		"react-router-dom": "^7.1.5",
+		"react-router-dom": "^6.28.0",
 		"uuid": "^11.1.0"
 	},
 	"lint-staged": {

@@ -261,10 +261,9 @@ const AppContent: React.FC = () => {
 export const App: React.FC = () => {
 	return (
 		<ErrorBoundary onError={(error, errorInfo) => {
-			// Здесь можно добавить отправку ошибок в сервис мониторинга
 			console.error('App Error:', error, errorInfo);
 		}}>
-			<BrowserRouter>
+			<BrowserRouter basename="/stellar-burger">
 				<AppContent />
 			</BrowserRouter>
 		</ErrorBoundary>
