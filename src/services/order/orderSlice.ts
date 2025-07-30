@@ -5,13 +5,13 @@ import { refreshToken } from '../auth/authSlice';
 import { IOrder } from '@utils/types';
 import { AppDispatch, RootState } from '../store';
 
-interface IOrderState {
+export interface IOrderState {
 	order: IOrder | null;
 	loading: boolean;
 	error: string | null;
 }
 
-const initialState: IOrderState = {
+export const initialState: IOrderState = {
 	order: null,
 	loading: false,
 	error: null,

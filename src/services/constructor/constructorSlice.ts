@@ -2,7 +2,7 @@ import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
 import { IIngredient, IConstructorIngredient } from '@utils/types';
 import { RootState } from '../store';
 
-interface IConstructorState {
+export interface IConstructorState {
 	bun: IIngredient | null;
 	ingredients: IConstructorIngredient[];
 }
@@ -16,7 +16,7 @@ const generateUuid = (): string => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
 };
 
-const initialState: IConstructorState = {
+export const initialState: IConstructorState = {
 	bun: null,
 	ingredients: [],
 };

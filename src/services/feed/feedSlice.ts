@@ -3,7 +3,7 @@ import { IFeedOrder, IFeedMessage, TOrderStatus } from '../../utils/types';
 import { RootState } from '../store';
 
 // Состояние ленты заказов
-interface FeedState {
+export interface FeedState {
   orders: IFeedOrder[];
   total: number;
   totalToday: number;
@@ -14,7 +14,7 @@ interface FeedState {
 }
 
 // Начальное состояние
-const initialState: FeedState = {
+export const initialState: FeedState = {
   orders: [],
   total: 0,
   totalToday: 0,

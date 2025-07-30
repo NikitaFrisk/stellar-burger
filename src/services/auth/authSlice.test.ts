@@ -3,36 +3,16 @@ import {
 	clearError,
 	register,
 	login,
-	logoutUser
+	logoutUser,
+	initialState,
+	User,
+	AuthState
 } from './authSlice';
-
-// Интерфейсы для тестирования
-interface User {
-	email: string;
-	name: string;
-}
-
-interface AuthState {
-	user: User | null;
-	isAuthenticated: boolean;
-	loading: boolean;
-	error: string | null;
-	isPasswordResetRequested: boolean;
-}
 
 // Мокаем данные для тестирования
 const mockUser: User = {
 	email: 'test@example.com',
 	name: 'Test User'
-};
-
-// Начальное состояние для тестов
-const initialState: AuthState = {
-	user: null,
-	isAuthenticated: false,
-	loading: false,
-	error: null,
-	isPasswordResetRequested: false
 };
 
 describe('authSlice', () => {

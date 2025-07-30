@@ -6,17 +6,12 @@ import {
 	clearOrder,
 	selectOrder,
 	selectOrderLoading,
-	selectOrderError
+	selectOrderError,
+	initialState,
+	IOrderState
 } from './orderSlice';
 import { IOrder } from '@utils/types';
 import { RootState } from '../store';
-
-// Интерфейс состояния заказа
-interface IOrderState {
-	order: IOrder | null;
-	loading: boolean;
-	error: string | null;
-}
 
 // Мокаем данные для тестирования
 const mockOrder: IOrder = {
@@ -26,13 +21,6 @@ const mockOrder: IOrder = {
 	createdAt: '2023-08-23T10:30:00.000Z',
 	updatedAt: '2023-08-23T10:30:30.000Z',
 	ingredients: ['ingredient1', 'ingredient2']
-};
-
-// Начальное состояние для тестов
-const initialState: IOrderState = {
-	order: null,
-	loading: false,
-	error: null
 };
 
 describe('orderSlice', () => {

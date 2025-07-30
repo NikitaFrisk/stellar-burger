@@ -7,16 +7,12 @@ import {
 	clearConstructor,
 	selectBun,
 	selectIngredients,
-	selectTotalPrice
+	selectTotalPrice,
+	initialState,
+	IConstructorState
 } from './constructorSlice';
 import { IIngredient, IConstructorIngredient } from '../../utils/types';
 import { RootState } from '../store';
-
-// Интерфейс состояния конструктора
-interface IConstructorState {
-	bun: IIngredient | null;
-	ingredients: IConstructorIngredient[];
-}
 
 // Мокаем данные для тестирования
 const mockBun: IIngredient = {
@@ -61,12 +57,6 @@ const mockConstructorIngredient2: IConstructorIngredient = {
 	type: 'sauce',
 	price: 90,
 	uuid: 'test-uuid-2'
-};
-
-// Начальное состояние для тестов
-const initialState: IConstructorState = {
-	bun: null,
-	ingredients: []
 };
 
 describe('constructorSlice', () => {

@@ -9,21 +9,12 @@ import feedReducer, {
 	selectFeedTotal,
 	selectFeedTotalToday,
 	selectFeedConnected,
-	selectFeedError
+	selectFeedError,
+	initialState,
+	FeedState
 } from './feedSlice';
 import { IFeedOrder, IFeedMessage } from '../../utils/types';
 import { RootState } from '../store';
-
-// Интерфейс состояния ленты заказов
-interface FeedState {
-	orders: IFeedOrder[];
-	total: number;
-	totalToday: number;
-	isConnecting: boolean;
-	isConnected: boolean;
-	error: string | null;
-	connectionUrl: string | null;
-}
 
 // Мокаем данные для тестирования
 const mockOrder: IFeedOrder = {
@@ -41,17 +32,6 @@ const mockFeedMessage: IFeedMessage = {
 	orders: [mockOrder],
 	total: 100,
 	totalToday: 10
-};
-
-// Начальное состояние для тестов
-const initialState: FeedState = {
-	orders: [],
-	total: 0,
-	totalToday: 0,
-	isConnecting: false,
-	isConnected: false,
-	error: null,
-	connectionUrl: null
 };
 
 describe('feedSlice', () => {

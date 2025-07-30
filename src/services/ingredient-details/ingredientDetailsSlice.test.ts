@@ -2,15 +2,12 @@ import {
 	ingredientDetailsReducer,
 	setCurrentIngredient,
 	clearCurrentIngredient,
-	selectCurrentIngredient
+	selectCurrentIngredient,
+	initialState,
+	IIngredientDetailsState
 } from './ingredientDetailsSlice';
 import { IIngredient } from '@utils/types';
 import { RootState } from '../store';
-
-// Интерфейс состояния деталей ингредиента
-interface IIngredientDetailsState {
-	currentIngredient: IIngredient | null;
-}
 
 // Мокаем данные для тестирования
 const mockIngredient: IIngredient = {
@@ -26,11 +23,6 @@ const mockIngredient: IIngredient = {
 	image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png',
 	image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png',
 	__v: 0
-};
-
-// Начальное состояние для тестов
-const initialState: IIngredientDetailsState = {
-	currentIngredient: null
 };
 
 describe('ingredientDetailsSlice', () => {

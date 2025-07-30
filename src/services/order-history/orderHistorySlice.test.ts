@@ -1,4 +1,6 @@
 import orderHistoryReducer, {
+	initialState,
+	OrderHistoryState,
 	connectToOrderHistory,
 	connectionSuccess,
 	connectionError,
@@ -45,14 +47,6 @@ const invalidOrder = {
 	ingredients: [],
 	createdAt: '',
 	updatedAt: ''
-};
-
-const initialState = {
-	orders: [],
-	isConnecting: false,
-	isConnected: false,
-	error: null,
-	connectionUrl: null,
 };
 
 describe('orderHistorySlice', () => {

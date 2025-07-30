@@ -3,7 +3,9 @@ import orderDetailsReducer, {
 	clearOrderDetails,
 	selectOrderDetailsOrder,
 	selectOrderDetailsLoading,
-	selectOrderDetailsError
+	selectOrderDetailsError,
+	initialState,
+	OrderDetailsState
 } from './orderDetailsSlice';
 import { IFeedOrder } from '../../utils/types';
 
@@ -24,12 +26,6 @@ const mockOrder: IFeedOrder = {
 	createdAt: '2023-08-23T10:30:00.000Z',
 	updatedAt: '2023-08-23T10:30:30.000Z',
 	name: 'Краторный бургер'
-};
-
-const initialState = {
-	order: null,
-	loading: false,
-	error: null,
 };
 
 describe('orderDetailsSlice', () => {

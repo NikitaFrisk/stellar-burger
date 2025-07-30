@@ -6,18 +6,13 @@ import {
 	fetchIngredients,
 	selectIngredients,
 	selectIngredientsLoading,
-	selectIngredientsError
+	selectIngredientsError,
+	initialState,
+	IIngredientsState
 } from './ingredientsSlice';
 import { IIngredient } from '@utils/types';
 import { RootState } from '../store';
 import { request } from '../../utils/api-constants';
-
-// Интерфейс состояния ингредиентов
-interface IIngredientsState {
-	items: IIngredient[];
-	loading: boolean;
-	error: string | null;
-}
 
 // Мокаем API
 jest.mock('../../utils/api-constants');
@@ -54,13 +49,6 @@ const mockIngredients: IIngredient[] = [
 		__v: 0
 	}
 ];
-
-// Начальное состояние для тестов
-const initialState: IIngredientsState = {
-	items: [],
-	loading: false,
-	error: null
-};
 
 describe('ingredientsSlice', () => {
 	// Тестируем начальное состояние
