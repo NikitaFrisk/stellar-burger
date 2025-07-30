@@ -1,12 +1,1 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="./"/><title>Vkusno i Stellar</title><script>console.log('Index.html loading, current URL:', window.location.href);
-        (function(l) {
-            if (l.search[1] === '/' ) {
-                console.log('Processing redirect from 404');
-                var decoded = l.search.slice(1).split('&').map(function(s) { 
-                    return s.replace(/~and~/g, '&')
-                }).join('?');
-                var newUrl = l.pathname.slice(0, -1) + decoded + l.hash;
-                console.log('Redirecting to:', newUrl);
-                window.history.replaceState(null, null, newUrl);
-            }
-        }(window.location))</script><script defer="defer" src="./static/scripts/main.3429772b07e412bc2668.js"></script><link href="./static/styles/main.a96384e4319024b550f2.css" rel="stylesheet"></head><body><div id="root"></div><div id="modals"></div></body></html>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="/"/><title>Vkusno i Stellar</title><script defer="defer" src="/static/scripts/main.6a35d341dd36f4f76e3b.js"></script><link href="/static/styles/main.ccef08e3ba750008d0ac.css" rel="stylesheet"></head><body><div id="root"></div><div id="modals"></div></body></html>
