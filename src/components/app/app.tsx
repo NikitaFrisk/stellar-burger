@@ -1,7 +1,7 @@
 import {
 	Routes,
 	Route,
-	BrowserRouter,
+	HashRouter ,
 	useLocation,
 	useNavigate,
 	useParams,
@@ -264,9 +264,9 @@ export const App: React.FC = () => {
 			// Здесь можно добавить отправку ошибок в сервис мониторинга
 			console.error('App Error:', error, errorInfo);
 		}}>
-			<BrowserRouter>
+			<HashRouter>
 				<AppContent />
-			</BrowserRouter>
+			</HashRouter>
 		</ErrorBoundary>
 	);
 }; 

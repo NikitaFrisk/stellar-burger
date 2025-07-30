@@ -12,8 +12,7 @@ module.exports = {
 		path: path.resolve(__dirname, '..', './dist'), 
 		filename: production
 			? 'static/scripts/[name].[contenthash].js'
-			: 'static/scripts/[name].js', 
-		publicPath: '/', 
+			: 'static/scripts/[name].js'
 	},
 	
 	module: {

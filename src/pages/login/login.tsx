@@ -27,7 +27,7 @@ export const LoginPage = () => {
 			const { from } = location.state || { from: { pathname: '/' } };
 			navigate(from.pathname || '/', { replace: true });
 		}
-	}, [isAuthenticated, navigate, location.state]);
+	}, [isAuthenticated, navigate]);
 
 	useEffect(() => {
 		// Очищаем ошибки при размонтировании компонента

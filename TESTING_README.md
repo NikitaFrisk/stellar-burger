@@ -59,7 +59,7 @@ npm start
 
 # В другом терминале запустите Cypress
 npx cypress open      # Интерактивный режим
-     # Headless режим
+npx cypress run       # Headless режим
 ```
 
 ## Структура тестов
