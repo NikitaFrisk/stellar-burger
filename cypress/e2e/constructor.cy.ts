@@ -34,6 +34,13 @@ describe('Burger Constructor', () => {
         user: { email: 'bpnatv@gmail.com', name: 'Test User' }
       } 
     }).as('login')
+    cy.intercept('GET', '**/api/auth/user', { 
+      statusCode: 200, 
+      body: { 
+        success: true, 
+        user: { email: 'bpnatv@gmail.com', name: 'Test User' }
+      } 
+    }).as('getUser')
     
     // Посещаем главную страницу
     cy.visit('/')
@@ -125,16 +132,14 @@ describe('Burger Constructor', () => {
   })
 
   it('should create order when order button clicked with authentication', () => {
-    // Выполняем реальный вход в систему
-    cy.visit('/login')
+    // Симулируем авторизованное состояние через localStorage
+    cy.window().then((win) => {
+      win.localStorage.setItem('accessToken', 'Bearer test-token')
+    })
+    cy.setCookie('refreshToken', 'test-refresh-token')
     
-    // Заполняем форму логина
-    cy.get('input[name="email"]').type('bpnatv@gmail.com')
-    cy.get('input[name="password"]').type('yandex2025!')
-    cy.get('button[type="submit"]').click()
-    
-    // Ждем перехода на главную страницу
-    cy.url().should('eq', 'http://localhost:8080/')
+    // Перезагружаем страницу чтобы применить токены
+    cy.reload()
     cy.wait('@getIngredients')
     
     // Находим булку и добавляем её в конструктор используя drag and drop
@@ -148,6 +153,10 @@ describe('Burger Constructor', () => {
         });
     });
     
+    // Проверяем что булка добавилась
+    cy.get(SELECTORS.CONSTRUCTOR_BUN_TOP).should('exist')
+    cy.get(SELECTORS.CONSTRUCTOR_BUN_BOTTOM).should('exist')
+    
     // Находим начинку и добавляем её в конструктор
     cy.get(SELECTORS.INGREDIENT_CARD).contains('котлета').first().then($el => {
       const dataTransfer = new DataTransfer();
@@ -158,6 +167,9 @@ describe('Burger Constructor', () => {
           cy.get(SELECTORS.BURGER_CONSTRUCTOR).trigger('drop', { dataTransfer });
         });
     });
+    
+    // Проверяем что начинка добавилась
+    cy.get(SELECTORS.CONSTRUCTOR_INGREDIENTS).should('exist')
     
     // Проверяем что кнопка заказа доступна и кликаем
     cy.get(SELECTORS.ORDER_BUTTON).should('not.be.disabled')
@@ -214,6 +226,13 @@ describe('Burger Constructor - Edge Cases', () => {
         user: { email: 'bpnatv@gmail.com', name: 'Test User' }
       } 
     }).as('login')
+    cy.intercept('GET', '**/api/auth/user', { 
+      statusCode: 200, 
+      body: { 
+        success: true, 
+        user: { email: 'bpnatv@gmail.com', name: 'Test User' }
+      } 
+    }).as('getUser')
     cy.visit('/')
     cy.wait('@getIngredients')
   })
@@ -236,14 +255,14 @@ describe('Burger Constructor - Edge Cases', () => {
     // Мокаем ошибку API для заказов
     cy.intercept('POST', '**/api/orders', { statusCode: 500, body: { message: 'Server Error' } }).as('createOrderError')
     
-    // Выполняем реальный вход в систему
-    cy.visit('/login')
-    cy.get('input[name="email"]').type('bpnatv@gmail.com')
-    cy.get('input[name="password"]').type('yandex2025!')
-    cy.get('button[type="submit"]').click()
+    // Симулируем авторизованное состояние через localStorage
+    cy.window().then((win) => {
+      win.localStorage.setItem('accessToken', 'Bearer test-token')
+    })
+    cy.setCookie('refreshToken', 'test-refresh-token')
     
-    // Ждем перехода на главную страницу
-    cy.url().should('eq', 'http://localhost:8080/')
+    // Перезагружаем страницу чтобы применить токены
+    cy.reload()
     cy.wait('@getIngredients')
     
     // Добавляем ингредиенты
