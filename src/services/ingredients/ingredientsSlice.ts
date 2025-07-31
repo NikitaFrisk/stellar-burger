@@ -3,13 +3,13 @@ import { ENDPOINTS, request } from '../../utils/api-constants';
 import { IIngredient } from '@utils/types';
 import { AppDispatch, RootState } from '../store';
 
-interface IIngredientsState {
+export interface IIngredientsState {
 	items: IIngredient[];
 	loading: boolean;
 	error: string | null;
 }
 
-const initialState: IIngredientsState = {
+export const initialState: IIngredientsState = {
 	items: [],
 	loading: false,
 	error: null,

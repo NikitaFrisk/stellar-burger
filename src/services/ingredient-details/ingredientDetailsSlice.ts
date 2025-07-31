@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IIngredient } from '@utils/types';
 import { RootState } from '../store';
 
-interface IIngredientDetailsState {
+export interface IIngredientDetailsState {
 	currentIngredient: IIngredient | null;
 }
 
-const initialState: IIngredientDetailsState = {
+export const initialState: IIngredientDetailsState = {
 	currentIngredient: null,
 };
 

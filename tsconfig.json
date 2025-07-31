@@ -19,6 +19,7 @@
 		"allowJs": true /* Allow javascript files to be compiled. Useful when migrating JS to TS */,
 		// "checkJs": true /* Report errors in .js files. Works in tandem with allowJs. */,
 		"plugins": [{ "name": "typescript-plugin-css-modules" }],
+		"types": ["jest", "@types/jest", "node"],
 		"paths": {
 			"@pages/*": ["./src/pages/*"],
 			"@components/*": ["./src/components/*"],
@@ -28,5 +29,6 @@
 		}
 	},
 	"outDir": "./dist/",
-	"include": ["src/**/*"]
+	"include": ["src/**/*"],
+	"exclude": ["**/*.test.*", "**/*.spec.*", "cypress/**/*", "test/**/*"]
 }

@@ -4,14 +4,14 @@ import { ENDPOINTS, request } from '../../utils/api-constants';
 import { RootState } from '../store';
 
 // Состояние для получения деталей заказа
-interface OrderDetailsState {
+export interface OrderDetailsState {
   order: IFeedOrder | null;
   loading: boolean;
   error: string | null;
 }
 
 // Начальное состояние
-const initialState: OrderDetailsState = {
+export const initialState: OrderDetailsState = {
   order: null,
   loading: false,
   error: null,

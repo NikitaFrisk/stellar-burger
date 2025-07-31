@@ -77,7 +77,8 @@ const IngredientCard: React.FC<IIngredientCardProps> = ({ ingredient, onClick })
 			role='button'
 			tabIndex={0}
 			ref={dragRef}
-			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			style={{ opacity: isDragging ? 0.5 : 1 }}
+			data-testid="ingredient-item">
 			<img src={ingredient.image} alt={ingredient.name} />
 			{count > 0 && <div className={styles.count}>{count}</div>}
 			<div className={styles.price}>

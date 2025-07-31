@@ -10,6 +10,12 @@ export default {
 		'^@utils/(.*)$': '<rootDir>/src/utils/$1',
 	},
 	globals: {
-		fetch: global.fetch,
+		fetch: global.fetch
 	},
+	preset: 'ts-jest',
+	transform: {
+		'^.+\\.(ts|tsx)$': ['ts-jest', {
+			tsconfig: 'tsconfig.test.json'
+		}]
+	}
 };
