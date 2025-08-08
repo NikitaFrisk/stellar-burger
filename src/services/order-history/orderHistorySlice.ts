@@ -3,7 +3,7 @@ import { IFeedOrder, IFeedMessage } from '../../utils/types';
 import { RootState } from '../store';
 
 // Состояние истории заказов пользователя
-interface OrderHistoryState {
+export interface OrderHistoryState {
   orders: IFeedOrder[];
   isConnecting: boolean;
   isConnected: boolean;
@@ -12,7 +12,7 @@ interface OrderHistoryState {
 }
 
 // Начальное состояние
-const initialState: OrderHistoryState = {
+export const initialState: OrderHistoryState = {
   orders: [],
   isConnecting: false,
   isConnected: false,

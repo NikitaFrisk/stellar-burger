@@ -3,12 +3,12 @@ import { ENDPOINTS, requestData } from '../../utils/api-constants';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
 
 // Типы для пользователя и состояния
-interface User {
+export interface User {
 	email: string;
 	name: string;
 }
 
-interface AuthState {
+export interface AuthState {
 	user: User | null;
 	isAuthenticated: boolean;
 	loading: boolean;
@@ -45,7 +45,7 @@ interface AuthResponse {
 	refreshToken: string;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
 	user: null,
 	isAuthenticated: false,
 	loading: false,

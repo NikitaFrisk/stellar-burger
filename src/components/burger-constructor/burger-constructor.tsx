@@ -91,7 +91,8 @@ const DraggableConstructorElement: React.FC<IDraggableConstructorElementProps> =
 		<div
 			className={styles.ingredient}
 			ref={ref}
-			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			style={{ opacity: isDragging ? 0.5 : 1 }}
+			data-testid="constructor-ingredient">
 			<div className={styles.dragIcon}>
 				<DragIcon type='primary' />
 			</div>
@@ -166,9 +167,10 @@ export const BurgerConstructor: React.FC = () => {
 			<div
 				className={styles.constructorElements}
 				ref={dropTargetRef}
-				style={containerStyle}>
+				style={containerStyle}
+				data-testid="burger-constructor">
 				{bun ? (
-					<div className={styles.bun}>
+					<div className={styles.bun} data-testid="constructor-bun-top">
 						<ConstructorElement
 							type='top'
 							isLocked={true}
@@ -186,7 +188,7 @@ export const BurgerConstructor: React.FC = () => {
 				)}
 
 				{fillings.length > 0 ? (
-					<div className={styles.scrollArea}>
+					<div className={styles.scrollArea} data-testid="constructor-ingredients">
 						{fillings.map((item, index) => (
 							<DraggableConstructorElement
 								key={item.uuid}
@@ -205,7 +207,7 @@ export const BurgerConstructor: React.FC = () => {
 				)}
 
 				{bun ? (
-					<div className={`${styles.bun} ${styles.bunBottom}`}>
+					<div className={`${styles.bun} ${styles.bunBottom}`} data-testid="constructor-bun-bottom">
 						<ConstructorElement
 							type='bottom'
 							isLocked={true}
@@ -225,7 +227,7 @@ export const BurgerConstructor: React.FC = () => {
 			</div>
 
 			<div className={styles.total}>
-				<div className={styles.price}>
+				<div className={styles.price} data-testid="total-price">
 					<span className='text text_type_digits-medium'>{totalPrice}</span>
 					<CurrencyIcon type='primary' />
 				</div>
@@ -234,7 +236,8 @@ export const BurgerConstructor: React.FC = () => {
 					type='primary'
 					size='large'
 					onClick={handleOrderClick}
-					disabled={!isOrderEnabled}>
+					disabled={!isOrderEnabled}
+					data-testid="order-button">
 					{orderLoading
 						? 'Оформляем заказ...'
 						: isAuthenticated
